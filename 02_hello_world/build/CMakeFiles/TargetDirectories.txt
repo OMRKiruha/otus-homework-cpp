@@ -1,3 +1,0 @@
-F:/YandexDisk/Обучение Otus C++ Basic/02 Hello world/src4Clion/build/CMakeFiles/hello_world.dir
-F:/YandexDisk/Обучение Otus C++ Basic/02 Hello world/src4Clion/build/CMakeFiles/edit_cache.dir
-F:/YandexDisk/Обучение Otus C++ Basic/02 Hello world/src4Clion/build/CMakeFiles/rebuild_cache.dir
