@@ -5,7 +5,7 @@
 
 #include <string>
 
-void writeToTable(std::string userName, int tryCount);
+void writeToTable(const std::string& userName, int tryCount);
 
 void printTable();
 

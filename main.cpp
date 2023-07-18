@@ -48,6 +48,9 @@ int main() {
             }
             case 2: {
                 // 2. Показать таблицу рекордов
+                printTable();
+                std::cout << "\t Continue? y/n" << "\n";
+                if(!getYN()) exit(0);
                 break;
             }
             case 3:

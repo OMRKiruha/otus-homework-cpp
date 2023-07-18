@@ -96,7 +96,7 @@ bool getYN() {
             }else
                 return false;
         } else {
-            std::cout << "Please, input integer number\n";
+            std::cout << "Please, y or n\n";
         }
     } while (true);
 }
