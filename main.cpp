@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 
 #include "game.h"
@@ -18,7 +19,45 @@ void displayMenu() {
     std::cout << "\t 3. Exit" << "\n";
 }
 
-int main() {
+int main(int argc, char **argv) {
+    std::vector<std::string> arguments;
+    if (argc >= 2) {
+        for (auto i = 1; i < argc; ++i) {
+            arguments.push_back(argv[i]);
+        }
+
+        auto tablePos = std::find(arguments.begin(), arguments.end(), "-table");
+        if (tablePos != arguments.end()) {
+            printTable();
+            exit(0);
+        }
+
+        auto maxPos = std::find(arguments.begin(), arguments.end(), "-max");
+        if (maxPos != arguments.end()) {
+            if (std::find(arguments.begin(), arguments.end(), "-level") != arguments.end()) {
+                std::cout << "Wrong combination of arguments\n";
+                exit(0);
+            } else if (is_integer(*(maxPos + 1))) {
+                maxNumber = std::stoi(*(maxPos + 1));
+                if (maxNumber < 10) maxNumber = 10;
+                if (maxNumber > 100) maxNumber = 100;
+            }
+        }
+
+        auto levelPos = std::find(arguments.begin(), arguments.end(), "-level");
+        if (levelPos != arguments.end()) {
+            if (std::find(arguments.begin(), arguments.end(), "-max") != arguments.end()) {
+                std::cout << "Wrong combination of arguments\n";
+                exit(0);
+            } else if (is_integer(*(levelPos + 1))) {
+                int level = std::stoi(*(levelPos + 1));
+                if (level <= 1) maxNumber = 10;
+                if (level == 2) maxNumber = 50;
+                if (level >= 3) maxNumber = 100;
+            }
+        }
+    }
+
     do {
         // Выводим стартовое сообщение и текстовое меню
         displayMenu();
@@ -50,7 +89,7 @@ int main() {
                 // 2. Показать таблицу рекордов
                 printTable();
                 std::cout << "\t Continue? y/n" << "\n";
-                if(!getYN()) exit(0);
+                if (!getYN()) exit(0);
                 break;
             }
             case 3:

@@ -44,14 +44,14 @@ std::string getUserName() {
 
     do {
         std::getline(std::cin, out);
-        if(out.length()<4){
+        if (out.length() < 4) {
             std::cout << "Please, input Name more than 3 character\n";
             repeat = true;
-        } else if (out.length()>20){
+        } else if (out.length() > 20) {
             std::cout << "Please, input Name less than 21 character\n";
             repeat = true;
-        } else if(!is_right_name(out)) {
-            std::cout << "Please, input right name\n" << "Allowed symbols a-z A-Z 0-9 \n" ;
+        } else if (!is_right_name(out)) {
+            std::cout << "Please, input right name\n" << "Allowed symbols a-z A-Z 0-9 \n";
             repeat = true;
         } else {
             repeat = false;
@@ -71,10 +71,10 @@ int getMenuNumber() {
         std::getline(std::cin, str);
         if (is_integer(str)) {
             out = std::stoi(str);
-            if(out<1 || out>3) {
+            if (out < 1 || out > 3) {
                 std::cout << "Please, input 1, 2 or 3\n";
                 repeat = true;
-            }else
+            } else
                 repeat = false;
         } else {
             std::cout << "Please, input integer number\n";
@@ -91,9 +91,9 @@ bool getYN() {
     do {
         std::getline(std::cin, str);
         if (is_yes_or_no(str)) {
-            if(str == "y" || str == "y") {
+            if (str == "y" || str == "y") {
                 return true;
-            }else
+            } else
                 return false;
         } else {
             std::cout << "Please, y or n\n";

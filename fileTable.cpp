@@ -20,24 +20,33 @@ void printTable() {
         std::cout << "ERROR Can't open file";
     }
 
-    std::map<std::string, int> tableToOutput;
+    std::map<std::string, int> tableReaded;
     std::string name;
     int score;
     while (!file.eof()) {
         file >> name >> score;
         // Если имя уже есть в таблице и значение , то проверяем новое значение со старым
-        auto search = tableToOutput.find(name);
-        if (search == tableToOutput.end() || (search == tableToOutput.end() && search->second > score))
-            tableToOutput.insert(std::make_pair(name, score));
+        auto search = tableReaded.find(name);
+        if (search == tableReaded.end()) {
+            tableReaded.insert(std::make_pair(name, score));
+        } else if (search != tableReaded.end() && search->second > score) {
+            search->second = score;
+        }
+
+    }
+
+    std::map<int, std::string> tableToOutput;
+    for (auto &row: tableReaded) {
+        tableToOutput.insert(std::make_pair(row.second, row.first));
     }
 
     std::cout << "-----------------------------------------" << "\n";
     std::cout << "==========     High scores     ==========" << "\n";
     std::cout << "-----------------------------------------" << "\n";
-    for (auto &row : tableToOutput) {
+    for (auto &row: tableToOutput) {
         std::cout << "|  "
-                  << std::setw(22) << std::left << row.first << "  |  "
-                  << std::setw(8) << std::right << row.second << "  |\n";
+                  << std::setw(22) << std::left << row.second << "  |  "
+                  << std::setw(8) << std::right << row.first << "  |\n";
         std::cout << "-----------------------------------------" << "\n";
 
     }
