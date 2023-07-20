@@ -20,6 +20,8 @@ void displayMenu() {
 }
 
 int main(int argc, char **argv) {
+    std::ios_base::sync_with_stdio(false);
+
     std::vector<std::string> arguments;
     if (argc >= 2) {
         for (auto i = 1; i < argc; ++i) {
