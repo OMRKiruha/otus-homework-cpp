@@ -9,7 +9,7 @@ bool is_integer(const std::string &s) {
 }
 
 bool is_right_name(const std::string &s) {
-    std::regex pat{"[a-zA-Z][[:alnum:]]{4,20}"};
+    std::regex pat{"[a-zA-Z][[:alnum:]]{3,20}"};
     return regex_match(s, pat);
 }
 

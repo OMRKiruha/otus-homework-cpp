@@ -1,7 +1,6 @@
 #include <iostream>
 #include <algorithm>
 
-
 #include "game.h"
 #include "inputFiler.h"
 #include "getRandomNumber.h"
@@ -60,9 +59,9 @@ int main(int argc, char **argv) {
                 if (level == 2) maxNumber = 50;
                 if (level >= 3) maxNumber = 100;
             } else {
-            std::cout << "After -level needed 1, 2 or 3\n";
-            exit(0);
-        }
+                std::cout << "After -level needed 1, 2 or 3\n";
+                exit(0);
+            }
         }
     }
 
