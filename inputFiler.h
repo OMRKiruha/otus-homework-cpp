@@ -2,14 +2,17 @@
 #ifndef FINDNUMBER_INPUTFILER_H
 #define FINDNUMBER_INPUTFILER_H
 
-bool is_integer(const std::string& s);
+namespace inputFilter {
 
-bool getYN();
+    bool is_integer(const std::string &s);
 
-int getUserNumber();
+    bool getYN();
 
-std::string getUserName();
+    int getUserNumber();
 
-int getMenuNumber();
+    std::string getUserName();
 
+    int getMenuNumber();
+
+}
 #endif //FINDNUMBER_INPUTFILER_H

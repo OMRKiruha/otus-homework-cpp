@@ -18,7 +18,7 @@ add_executable(findNumber
         game.cpp game.h
         getRandomNumber.cpp getRandomNumber.h
         inputFiler.cpp inputFiler.h
-        fileTable.cpp fileTable.h)
+        fileTable.cpp fileTable.h print.cpp print.h)
 
 target_compile_options(findNumber PUBLIC
         -Wall

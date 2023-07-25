@@ -2,11 +2,13 @@
 #ifndef FINDNUMBER_FILETABLE_H
 #define FINDNUMBER_FILETABLE_H
 
-
 #include <string>
 
-void writeToTable(const std::string& userName, int tryCount);
+namespace highScore{
 
-void printTable();
+    void write(const std::string &userName, int tryCount);
 
+    void print();
+
+}
 #endif //FINDNUMBER_FILETABLE_H

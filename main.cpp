@@ -5,18 +5,9 @@
 #include "inputFiler.h"
 #include "getRandomNumber.h"
 #include "fileTable.h"
+#include "print.h"
 
 unsigned int maxNumber = 100;
-
-void displayMenu() {
-    std::cout << "-------------------------------------------------------" << "\n";
-    std::cout << "=============== Game = Guess the number ===============" << "\n";
-    std::cout << "-------------------------------------------------------" << "\n";
-    std::cout << "\n";
-    std::cout << "\t 1. New game" << "\n";
-    std::cout << "\t 2. Table of records" << "\n";
-    std::cout << "\t 3. Exit" << "\n";
-}
 
 int main(int argc, char **argv) {
     std::ios_base::sync_with_stdio(false);
@@ -29,7 +20,7 @@ int main(int argc, char **argv) {
 
         auto tablePos = std::find(arguments.begin(), arguments.end(), "-table");
         if (tablePos != arguments.end()) {
-            printTable();
+            highScore::print();
             exit(0);
         }
 
@@ -38,7 +29,7 @@ int main(int argc, char **argv) {
             if (std::find(arguments.begin(), arguments.end(), "-level") != arguments.end()) {
                 std::cout << "Wrong combination of arguments\n";
                 exit(0);
-            } else if ((maxPos + 1) != arguments.end() && is_integer(*(maxPos + 1))) {
+            } else if ((maxPos + 1) != arguments.end() && inputFilter::is_integer(*(maxPos + 1))) {
                 maxNumber = std::stoi(*(maxPos + 1));
                 if (maxNumber < 10) maxNumber = 10;
                 if (maxNumber > 100) maxNumber = 100;
@@ -53,7 +44,7 @@ int main(int argc, char **argv) {
             if (std::find(arguments.begin(), arguments.end(), "-max") != arguments.end()) {
                 std::cout << "Wrong combination of arguments\n";
                 exit(0);
-            } else if ((levelPos + 1) != arguments.end() && is_integer(*(levelPos + 1))) {
+            } else if ((levelPos + 1) != arguments.end() && inputFilter::is_integer(*(levelPos + 1))) {
                 int level = std::stoi(*(levelPos + 1));
                 if (level <= 1) maxNumber = 10;
                 if (level == 2) maxNumber = 50;
@@ -67,9 +58,9 @@ int main(int argc, char **argv) {
 
     do {
         // Выводим стартовое сообщение и текстовое меню
-        displayMenu();
+        print::menu();
 
-        switch (getMenuNumber()) {
+        switch (inputFilter::getMenuNumber()) {
             case 1: {
                 do {
                     // 1. Начать новую игру
@@ -77,32 +68,31 @@ int main(int argc, char **argv) {
                     unsigned int targetNumber = getRandomNumber(maxNumber);
 
                     // Человек отгадывает
-                    int tryCount = game(targetNumber);
+                    int tryCount = game(targetNumber, maxNumber);
                     std::cout << "The number of Your attempts: " << tryCount << "\n";
 
                     // Просьба ввести имя игрока
                     std::cout << "Input player name - ";
-                    std::string userName = getUserName();
+                    std::string userName = inputFilter::getUserName();
 
                     // Сохраняем в таблицу рекордов
-                    writeToTable(userName, tryCount);
+                    highScore::write(userName, tryCount);
 
                     // Играть ещё или выход в меню
                     std::cout << "\t Play again? y/n" << "\n";
-                } while (getYN());
+                } while (inputFilter::getYN());
                 break;
             }
             case 2: {
                 // 2. Показать таблицу рекордов
-                printTable();
+                highScore::print();
                 std::cout << "\t Continue? y/n" << "\n";
-                if (!getYN()) exit(0);
+                if (!inputFilter::getYN()) exit(0);
                 break;
             }
             case 3:
                 // 3. Выход
-                exit(0);
+                return 0;
         }
     } while (true);
-    return 0;
 }

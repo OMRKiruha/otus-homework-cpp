@@ -1,6 +1,3 @@
-//
-// Created by kiryuhin_ve on 18.07.2023.
-//
 
 #include "getRandomNumber.h"
 
