@@ -1,7 +1,10 @@
 #pragma once
-#include "Ball.hpp"
-#include "Physics.h"
+
 #include <vector>
+
+#include "Ball.hpp"
+#include "Dust.h"
+#include "Physics.h"
 
 class Painter;
 
@@ -15,10 +18,16 @@ class World {
     // Границы мира заданы углами прямоугольника
     Point topLeft;
     Point bottomRight;
+
     // Объект физического движка
     Physics physics;
+
     // Контейнер с шарами
     std::vector<Ball> balls;
+
+    // Контейнер со вспышками
+    //std::vector<Dust> fireworks;
+
     // Длина отрезка времени, который не был
     // учтен при прошлой симуляции. См. реализацию update
     double restTime = 0.;
