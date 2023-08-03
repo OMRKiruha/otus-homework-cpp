@@ -36,14 +36,15 @@ void Application::updateWorld(World& world) {
     const auto currentTime = std::chrono::system_clock::now();
     const double delta =
         std::chrono::duration_cast<std::chrono::duration<double>>(currentTime -
-                                                                  time)
-            .count();
+                                                                  time).count();
     time = currentTime;
 
     totalTime += delta;
 
     if (totalTime < 10.) {
         world.update(delta);
+    }else {
+        world.removeDust();
     }
 }
 

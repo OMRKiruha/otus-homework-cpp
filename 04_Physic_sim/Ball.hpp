@@ -32,5 +32,5 @@ class Ball {
     Point m_center;
     Velocity m_velocity;
     Color m_color;
-    bool m_isCollidable;
+    bool m_isCollidable{};
 };

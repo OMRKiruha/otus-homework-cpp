@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 #include <vector>
 
 #include "Ball.hpp"
@@ -13,6 +14,7 @@ class World {
     World(const std::string& worldFilePath);
     void show(Painter& painter) const;
     void update(double time);
+    void removeDust();
 
   private:
     // Границы мира заданы углами прямоугольника
@@ -26,7 +28,7 @@ class World {
     std::vector<Ball> balls;
 
     // Контейнер со вспышками
-    //std::vector<Dust> fireworks;
+    std::list<Dust> fireworks;
 
     // Длина отрезка времени, который не был
     // учтен при прошлой симуляции. См. реализацию update

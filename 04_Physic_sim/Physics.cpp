@@ -1,4 +1,5 @@
 #include "Physics.h"
+#include <algorithm>
 
 double dot(const Point& lhs, const Point& rhs) {
     return lhs.x * rhs.x + lhs.y * rhs.y;
@@ -11,16 +12,19 @@ void Physics::setWorldBox(const Point& topLeft, const Point& bottomRight) {
     this->bottomRight = bottomRight;
 }
 
-void Physics::update(std::vector<Ball>& balls, const size_t ticks) const {
+void Physics::update(std::vector<Ball>& balls, std::list<Dust>& fireworks,
+                     const size_t ticks) const {
 
     for (size_t i = 0; i < ticks; ++i) {
         move(balls);
         collideWithBox(balls);
-        collideBalls(balls);
+        collideBalls(balls, fireworks);
+        move(fireworks);
     }
 }
 
-void Physics::collideBalls(std::vector<Ball>& balls) const {
+void Physics::collideBalls(std::vector<Ball>& balls,
+                           std::list<Dust>& fireworks) const {
     for (auto a = balls.begin(); a != balls.end(); ++a) {
         for (auto b = std::next(a); b != balls.end(); ++b) {
             const double distanceBetweenCenters2 =
@@ -29,8 +33,10 @@ void Physics::collideBalls(std::vector<Ball>& balls) const {
             const double collisionDistance2 =
                 collisionDistance * collisionDistance;
 
-            if (distanceBetweenCenters2 < collisionDistance2 && Ball::isCollidableBalls(*a, *b)) {
+            if (distanceBetweenCenters2 < collisionDistance2 &&
+                Ball::isCollidableBalls(*a, *b)) {
                 processCollision(*a, *b, distanceBetweenCenters2);
+                addDust(fireworks, *a, *b);
             }
         }
     }
@@ -45,11 +51,13 @@ void Physics::collideWithBox(std::vector<Ball>& balls) const {
             return v < lo || v > hi;
         };
 
-        if (isOutOfRange(p.x, topLeft.x + r, bottomRight.x - r) && ball.getCollidable()) {
+        if (isOutOfRange(p.x, topLeft.x + r, bottomRight.x - r) &&
+            ball.getCollidable()) {
             Point vector = ball.getVelocity().vector();
             vector.x = -vector.x;
             ball.setVelocity(vector);
-        } else if (isOutOfRange(p.y, topLeft.y + r, bottomRight.y - r) && ball.getCollidable()) {
+        } else if (isOutOfRange(p.y, topLeft.y + r, bottomRight.y - r) &&
+                   ball.getCollidable()) {
             Point vector = ball.getVelocity().vector();
             vector.y = -vector.y;
             ball.setVelocity(vector);
@@ -63,6 +71,14 @@ void Physics::move(std::vector<Ball>& balls) const {
             ball.getCenter() + ball.getVelocity().vector() * timePerTick;
         ball.setCenter(newPos);
     }
+}
+
+void Physics::move(std::list<Dust>& fireworks) const {
+    for (auto& dust : fireworks) {
+        move(dust.getFlash());
+        dust.dropTTL();
+    }
+    fireworks.remove_if([](Dust& dust) { return dust.getTTL() <= 0; });
 }
 
 void Physics::processCollision(Ball& a, Ball& b,
@@ -82,4 +98,17 @@ void Physics::processCollision(Ball& a, Ball& b,
     // задаем новые скорости мячей после столкновения
     a.setVelocity(Velocity(aV - normal * p * a.getMass()));
     b.setVelocity(Velocity(bV + normal * p * b.getMass()));
+}
+
+void Physics::addDust(std::list<Dust>& fireworks, Ball& a, Ball& b) const {
+    // Находим точку столкновения
+    double coeff = (a.getRadius() / (a.getRadius() + b.getRadius()));
+
+    double x = a.getCenter().x + (b.getCenter().x - a.getCenter().x) * coeff;
+    double y = a.getCenter().y + (b.getCenter().y - a.getCenter().y) * coeff;
+
+    Point center(x, y);
+
+    // Добавляем Dust в вектор фейерверков
+    fireworks.emplace_back(center);
 }
