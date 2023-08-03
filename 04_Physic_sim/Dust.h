@@ -11,7 +11,7 @@ class Dust {
     Dust();
     ~Dust();
 
-    Dust(Point center);
+    Dust(const Point& center);
 
     void draw(Painter& painter) const;
 

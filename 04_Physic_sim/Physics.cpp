@@ -27,14 +27,16 @@ void Physics::collideBalls(std::vector<Ball>& balls,
                            std::list<Dust>& fireworks) const {
     for (auto a = balls.begin(); a != balls.end(); ++a) {
         for (auto b = std::next(a); b != balls.end(); ++b) {
+            if (!Ball::isCollidableBalls(*a, *b)) {
+                continue;
+            }
             const double distanceBetweenCenters2 =
                 distance2(a->getCenter(), b->getCenter());
             const double collisionDistance = a->getRadius() + b->getRadius();
             const double collisionDistance2 =
                 collisionDistance * collisionDistance;
 
-            if (distanceBetweenCenters2 < collisionDistance2 &&
-                Ball::isCollidableBalls(*a, *b)) {
+            if (distanceBetweenCenters2 < collisionDistance2) {
                 processCollision(*a, *b, distanceBetweenCenters2);
                 addDust(fireworks, *a, *b);
             }
@@ -44,6 +46,9 @@ void Physics::collideBalls(std::vector<Ball>& balls,
 
 void Physics::collideWithBox(std::vector<Ball>& balls) const {
     for (Ball& ball : balls) {
+        if (!ball.getCollidable()) {
+            continue;
+        }
         const Point p = ball.getCenter();
         const double r = ball.getRadius();
         // определяет, находится ли v в диапазоне (lo, hi) (не включая границы)
@@ -51,13 +56,11 @@ void Physics::collideWithBox(std::vector<Ball>& balls) const {
             return v < lo || v > hi;
         };
 
-        if (isOutOfRange(p.x, topLeft.x + r, bottomRight.x - r) &&
-            ball.getCollidable()) {
+        if (isOutOfRange(p.x, topLeft.x + r, bottomRight.x - r)) {
             Point vector = ball.getVelocity().vector();
             vector.x = -vector.x;
             ball.setVelocity(vector);
-        } else if (isOutOfRange(p.y, topLeft.y + r, bottomRight.y - r) &&
-                   ball.getCollidable()) {
+        } else if (isOutOfRange(p.y, topLeft.y + r, bottomRight.y - r)) {
             Point vector = ball.getVelocity().vector();
             vector.y = -vector.y;
             ball.setVelocity(vector);

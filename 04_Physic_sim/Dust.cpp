@@ -5,7 +5,7 @@ Dust::Dust() = default;
 
 Dust::~Dust() = default;
 
-Dust::Dust(Point center) {
+Dust::Dust(const Point& center) {
     double radius = 5.;
     m_center = center;
     double startVelocity = 50.;
