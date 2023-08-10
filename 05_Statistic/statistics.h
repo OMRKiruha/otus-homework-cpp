@@ -1,0 +1,8 @@
+//
+// Created by kiryuhin_ve on 10.08.2023.
+//
+
+#ifndef INC_05_HOMEWORK_STATISTICS_H
+#define INC_05_HOMEWORK_STATISTICS_H
+
+#endif //INC_05_HOMEWORK_STATISTICS_H
