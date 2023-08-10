@@ -18,5 +18,9 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "CLANG")
 elseif(...)
 
 endif()
+target_compile_options(statistics PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/W4>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic>
+        )
 set_target_properties(statistics PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
 
