@@ -1,67 +1,44 @@
 #include <iostream>
-#include <limits>
+#include <vector>
 
-class IStatistics {
-public:
-	virtual ~IStatistics() {}
+#include "statistics.h"
 
-	virtual void update(double next) = 0;
-	virtual double eval() const = 0;
-	virtual const char * name() const = 0;
-};
-
-class Min : public IStatistics {
-public:
-	Min() : m_min{std::numeric_limits<double>::min()} {
-	}
-
-	void update(double next) override {
-		if (next < m_min) {
-			m_min = next;
-		}
-	}
-
-	double eval() const override {
-		return m_min;
-	}
-
-	const char * name() const override {
-		return "min";
-	}
-
-private:
-	double m_min;
-};
 
 int main() {
 
-	const size_t statistics_count = 1;
-	IStatistics *statistics[statistics_count];
+    std::vector<IStatistics *> statistics;
 
-	statistics[0] = new Min{};
+    statistics.emplace_back(new Min{});
+    statistics.emplace_back(new Max{});
+    statistics.emplace_back(new Mean{});
+    statistics.emplace_back(new RMSD{});
+    statistics.emplace_back(new Pct90{});
+    statistics.emplace_back(new Pct95{});
 
-	double val = 0;
-	while (std::cin >> val) {
-		for (size_t i = 0; i < statistics_count; ++i) {
-			statistics[i]->update(val);
-		}
-	}
+    // Handle input data and update Satistics
+    double val = 0;
+    while (std::cin >> val) {
+        for (auto & statistic : statistics) {
+            statistic->update(val);
+        }
+    }
 
-	// Handle invalid input data
-	if (!std::cin.eof() && !std::cin.good()) {
-		std::cerr << "Invalid input data\n";
-		return 1;
-	}
+    // Handle invalid input data
+    if (!std::cin.eof() && !std::cin.good()) {
+        std::cerr << "Invalid input data\n";
+        return 1;
+    }
 
-	// Print results if any
-	for (size_t i = 0; i < statistics_count; ++i) {
-		std::cout << statistics[i]->name() << " = " << statistics[i]->eval() << std::endl;
-	}
+    // Print results if any
+    for (auto & statistic : statistics) {
+        std::cout << statistic->name() << " = " << statistic->eval() << std::endl;
+    }
 
-	// Clear memory - delete all objects created by new
-	for (size_t i = 0; i < statistics_count; ++i) {
-		delete statistics[i];
-	}
+    // Clear memory - delete all objects created by new
+    for (auto & statistic : statistics) {
+        delete statistic;
+    }
+    statistics.clear();
 
-	return 0;
+    return 0;
 }
