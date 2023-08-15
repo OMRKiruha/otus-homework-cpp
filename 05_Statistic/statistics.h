@@ -10,6 +10,21 @@
 #include <numeric>
 #include <algorithm>
 
+static inline double pct(const std::vector<double>& elements, double percent){
+    double m_pct{};
+    double i = (elements.size() - 1) * percent;
+    int f = floor(i);
+    int c = ceil(i);
+    if (f == c) {
+        m_pct = elements.at(f);
+    } else {
+        double d0 = elements.at(f) * (c - i);
+        double d1 = elements.at(c) * (i - f);
+        m_pct = d0 + d1;
+    }
+    return m_pct;
+}
+
 class IStatistics {
 public:
     virtual ~IStatistics() = default;
@@ -46,7 +61,7 @@ private:
 
 class Max : public IStatistics {
 public:
-    Max() : m_max{std::numeric_limits<double>::min()} {}
+    Max() : m_max{std::numeric_limits<double>::lowest()} {}
 
     void update(double next) override {
         if (next > m_max) {
@@ -69,15 +84,13 @@ public:
     void update(double next) override {
         m_summ += next;
         ++m_count;
-        m_mean = m_summ / m_count;
     }
 
-    double eval() const override { return m_mean; }
+    double eval() const override { return m_summ / m_count; }
 
     const char *name() const override { return "mean"; }
 
 private:
-    double m_mean{};
     double m_summ{};
     int m_count{};
 };
@@ -88,20 +101,20 @@ public:
 
     void update(double next) override {
         m_elements.push_back(next);
+    }
+
+    double eval() const override {
         long double mean = std::accumulate(m_elements.begin(), m_elements.end(), 0.0L) / m_elements.size();
         long double summOfSquares{};
         for (auto el: m_elements) {
             summOfSquares += powl((el - mean), 2);
         }
-        m_std = sqrtl(summOfSquares / (m_elements.size() - 1));
+        return sqrtl(summOfSquares / (m_elements.size() - 1));
     }
-
-    double eval() const override { return m_std; }
 
     const char *name() const override { return "std"; }
 
 private:
-    double m_std{};
     std::vector<double> m_elements;
 };
 
@@ -112,24 +125,15 @@ public:
     void update(double next) override {
         m_elements.push_back(next);
         std::sort(m_elements.begin(), m_elements.end());
-        double i = (m_elements.size() - 1) * 0.9;
-        int f = floor(i);
-        int c = ceil(i);
-        if (f == c) {
-            m_pct90 = m_elements.at(f);
-        } else {
-            double d0 = m_elements.at(f) * (c - i);
-            double d1 = m_elements.at(c) * (i - f);
-            m_pct90 = d0 + d1;
-        }
     }
 
-    double eval() const override { return m_pct90; }
+    double eval() const override {
+        return pct(m_elements, 0.90);
+    }
 
     const char *name() const override { return "pct90"; }
 
 private:
-    double m_pct90{};
     std::vector<double> m_elements;
 };
 
@@ -140,24 +144,15 @@ public:
     void update(double next) override {
         m_elements.push_back(next);
         std::sort(m_elements.begin(), m_elements.end());
-        double i = (m_elements.size() - 1) * 0.95;
-        int f = floor(i);
-        int c = ceil(i);
-        if (f == c) {
-            m_pct95 = m_elements.at(f);
-        } else {
-            double d0 = m_elements.at(f) * (c - i);
-            double d1 = m_elements.at(c) * (i - f);
-            m_pct95 = d0 + d1;
-        }
     }
 
-    double eval() const override { return m_pct95; }
+    double eval() const override {
+        return pct(m_elements, 0.95);
+    }
 
     const char *name() const override { return "pct95"; }
 
 private:
-    double m_pct95{};
     std::vector<double> m_elements;
 };
 
