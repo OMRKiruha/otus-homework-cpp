@@ -26,9 +26,9 @@ void testVec() {
     std::cout << "vec.size() = " << vec.size() << "\n";
 
     std::cout << "5. Удаляем из объекта класса MyVector<int> \n";
-    vec.erase(vec.begin() + 3);
-    vec.erase(vec.begin() + 5);
-    vec.erase(vec.begin() + 7);
+    vec.erase(vec.begin() + 2);
+    vec.erase(vec.begin() + 4);
+    vec.erase(vec.begin() + 6);
 
     std::cout << "6. Выводим на экран содержимое объекта класса MyVector<int>\n";
     for (auto elem: vec) {
@@ -62,16 +62,30 @@ void testVec() {
         std::cout << elem << " ";
     }
     std::cout << "\n";
+
+    MyVector<int> vec1(vec);
+    MyVector<int> vec2;
+    vec2 = vec;
 }
 
 void testList(){
 
 }
 
+void test_func() {
+    MyVector<int> values;
+    // заполнение контейнера элементами
+    for (auto iter = values.begin(); iter != values.end(); ++iter) {
+        std::cout << *iter << std::endl;
+        // или:
+        // std::cout << iter.get() << std::endl;
+
+    }
+}
+
 int main() {
     testVec();
     testList();
-
 
     return 0;
 }

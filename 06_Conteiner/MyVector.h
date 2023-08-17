@@ -3,47 +3,25 @@
 #define CONTEINERS_MYVECTOR_H
 
 #include <cstddef>
-#include <stdexcept>
+#include <iterator>
+
+
+template<typename T>
+class Iterator;
 
 #define DEBUG
 
 template<typename T>
 class MyVector {
-//public:
-//    template<typename U=T>
-//    class Iterator : public std::iterator<std::random_access_iterator_tag, T> {
-//
-//    private:
-//        explicit Iterator<T>(T *p) : p(p) {}
-//
-//    public:
-//        Iterator<T>(const Iterator<T> &it) : p(it.p) {}
-//
-//        bool operator!=(Iterator<T> const &other) const {
-//            return p != other.p;
-//        }
-//
-//        bool operator==(Iterator<T> const &other) const {
-//            return p == other.p;
-//        }
-//
-//        typename Iterator<T>::reference operator*() const {
-//            return *p;
-//        }
-//
-//        Iterator<T> &operator++() {
-//            ++p;
-//            return *this;
-//        }
-//    private:
-//        T *p;
-//    };
+
+    typedef Iterator<T> iterator;
+    typedef Iterator<const T> const_iterator;
 
 public:
     // Конструктор без параметров
     MyVector() {
 #ifdef DEBUG
-        std::cout << "Конструктор без параметров (по умолчанию)\n";
+        std::cout << "\tКонструктор без параметров (по умолчанию)\n";
 #endif
         m_capacity = m_min_elements;
         m_begin = new T[m_capacity]();
@@ -56,7 +34,7 @@ public:
     // Конструктор копирования
     MyVector(const MyVector<T> &other) {
 #ifdef DEBUG
-        std::cout << "Конструктор копирования\n";
+        std::cout << "\tКонструктор копирования\n";
 #endif
         this->m_capacity = other.m_capacity;
         m_begin = new T[m_capacity]();
@@ -67,7 +45,7 @@ public:
     //Деструктор
     ~MyVector() {
 #ifdef DEBUG
-        std::cout << "Деструктор\n";
+        std::cout << "\tДеструктор\n";
 #endif
         delete_elements();
     }
@@ -76,7 +54,7 @@ public:
     // Оператор присваивания копированием
     MyVector<T> &operator=(const MyVector<T> &other) {
 #ifdef DEBUG
-        std::cout << "Оператор присваивания копированием\n";
+        std::cout << "\tОператор присваивания копированием\n";
 #endif
         //Проверка на присваивание самому себе
         if (other.m_begin == this->m_begin) { return *this; }
@@ -100,7 +78,7 @@ public:
     // Оператор присваивания перемещением
     MyVector<T> &operator=(MyVector<T> &&other) noexcept {
 #ifdef DEBUG
-        std::cout << "Оператор присваивания перемещением\n";
+        std::cout << "\tОператор присваивания перемещением\n";
 #endif
         // Очищаем текущий объект
         delete_elements();
@@ -138,12 +116,12 @@ public:
     }
 
 
-    T *insert(T *pos, const T &value) {
+    T *insert(iterator pos, const T &value) {
         // Проверка на корректность переданного итератора
-        if (pos >= m_begin && pos <= m_end) {
+        if (pos.get() >= m_begin && pos.get() <= m_end) {
             // Вставка почти всегда вызывает реаллокацию всего массива
             // Только если это не вставка в конец и есть свободное место
-            if (pos == m_end && m_end != m_end_capacity) {
+            if (pos.get() == m_end && m_end != m_end_capacity) {
                 *m_end = value;
                 T *new_pos = m_end;
                 ++m_end;
@@ -159,7 +137,7 @@ public:
                 T *tempElem = temp;
                 T *new_pos = nullptr;
                 while (thisElem != m_end) {
-                    if (pos == thisElem) {
+                    if (pos.get() == thisElem) {
                         *tempElem = value;
                         new_pos = tempElem;
                         ++tempElem;
@@ -168,8 +146,8 @@ public:
                     ++tempElem;
                     ++thisElem;
                 }
-                ++m_size;
                 delete_elements();              // Удаляем старый массив
+                ++m_size;
                 this->m_begin = temp;           // Присваиваем новые указатели
                 this->m_end = temp + m_size;
                 this->m_end_capacity = temp + m_capacity;
@@ -180,12 +158,12 @@ public:
     }
 
 
-    T *erase(T *pos) {
+    T *erase(iterator pos) {
         // Проверка на корректность переданного итератора
-        if (pos >= m_begin && pos < m_end) {
+        if (pos.get() >= m_begin && pos.get() < m_end) {
             // Удаление почти всегда вызывает реаллокацию всего массива
             // Только если это не удаление из конца
-            if (pos == (m_end - 1)) {
+            if (pos.get() == (m_end - 1)) {
                 --m_end;
                 --m_size;
                 return m_end;
@@ -195,7 +173,7 @@ public:
                 T *tempElem = temp;
                 T *new_pos = nullptr;
                 while (thisElem != m_end) {
-                    if (thisElem == pos) {
+                    if (thisElem == pos.get()) {
                         ++thisElem;
                         *tempElem = *thisElem;
                         new_pos = tempElem;
@@ -205,8 +183,8 @@ public:
                     ++tempElem;
                     ++thisElem;
                 }
-                --m_size;
                 delete_elements();              // Удаляем старый массив
+                --m_size;
                 this->m_begin = temp;           // Присваиваем новые указатели
                 this->m_end = temp + m_size;
                 this->m_end_capacity = temp + m_capacity;
@@ -225,29 +203,13 @@ public:
         throw (std::out_of_range("Проверьте правильность индекса объекта MyVector"));
     }
 
-    T* begin() { return m_begin; }
+    iterator begin() { return iterator(m_begin); }
 
-    T* end() { return m_end; }
+    iterator end() { return iterator(m_end); }
 
-    //Iterator<const T>& begin() const { return static_cast<const Iterator<const T> &>(m_begin); }
+    const_iterator begin() const { return const_iterator(m_begin); }
 
-    //Iterator<const T>& end() const { return static_cast<const Iterator<const T> &>(m_end); }
-
-//    T &operator*(Iterator<T> *iter) {
-//        // Проверка на корректность переданного индекса элемента
-//        if (iter >= m_begin && iter < m_end) {
-//            return *iter;
-//        }
-//        throw (std::out_of_range("Проверьте правильность итератора объекта MyVector"));
-//    }
-//
-//    T &get(Iterator<T> iter) {
-//        // Проверка на корректность переданного индекса элемента
-//        if (iter >= m_begin && iter < m_end) {
-//            return *iter;
-//        }
-//        throw (std::out_of_range("Проверьте правильность итератора объекта MyVector"));
-//    }
+    const_iterator end() const { return const_iterator(m_end); }
 
 private:
     const size_t m_min_elements = 4;
@@ -261,7 +223,7 @@ private:
 private:
     void copy_elements_from(const MyVector<T> &other) {
 #ifdef DEBUG
-        std::cout << "Копируем элементы из другого объекта\n";
+        std::cout << "\tКопируем элементы из другого объекта\n";
 #endif
         T *otherElem = other.m_begin;
         T *thisElem = this->m_begin;
@@ -278,7 +240,7 @@ private:
 
     void copy_elements_to(T *temp) {
 #ifdef DEBUG
-        std::cout << "Копируем элементы в temp. Capacity = " << m_capacity << "\n";
+        std::cout << "\tКопируем элементы в temp. Capacity = " << m_capacity << "\n";
 #endif
         T *thisElem = this->m_begin;
         while (thisElem != m_end) {
@@ -291,7 +253,7 @@ private:
     // Удаляем элементы
     void delete_elements() {
 #ifdef DEBUG
-        std::cout << "Удаляем элементы\n";
+        std::cout << "\tУдаляем элементы. Size = " << m_size << " Capacity = " << m_capacity << "\n";
 #endif
         delete[] m_begin;
         m_begin = nullptr;
@@ -299,7 +261,50 @@ private:
         m_end_capacity = nullptr;
     }
 
+};
 
+template<typename T>
+class Iterator {
+
+public:
+    explicit Iterator(T *p) : p(p) {}
+
+    Iterator(const Iterator &it) : p(it.p) {}
+
+    bool operator!=(Iterator const &other) const {
+        return p != other.p;
+    }
+
+    bool operator==(Iterator const &other) const {
+        return p == other.p;
+    }
+
+    T *get() { return p; }
+
+    T &operator*() { return *p; }
+
+    Iterator<T> &operator++() {
+        ++p;
+        return *this;
+    }
+
+    Iterator<T> &operator--() {
+        --p;
+        return *this;
+    }
+
+    Iterator<T> &operator+(int i) {
+        p = p + i;
+        return *this;
+    }
+
+    Iterator<T> &operator-(int i) {
+        p = p - i;
+        return *this;
+    }
+
+private:
+    T *p;
 };
 
 #endif //CONTEINERS_MYVECTOR_H
