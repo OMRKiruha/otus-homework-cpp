@@ -15,7 +15,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(conteiners
         main.cpp
-        MyVector.h MyList.h)
+        MyVector.h
+        MyList.h)
 
 target_compile_options(conteiners PUBLIC
         -Wall
