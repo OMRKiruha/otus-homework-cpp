@@ -79,7 +79,6 @@ void testList(){
     list.erase(list.begin() + 3);
     list.erase(list.begin() + 4);
 
-
     std::cout << "6. Выводим на экран содержимое объекта класса MyList<int>\n";
     printList(list);
 
