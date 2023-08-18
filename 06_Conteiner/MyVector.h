@@ -7,15 +7,15 @@
 
 
 template<typename T>
-class Iterator;
+class MyVecIterator;
 
-#define DEBUG
+//#define DEBUG
 
 template<typename T>
 class MyVector {
 
-    typedef Iterator<T> iterator;
-    typedef Iterator<const T> const_iterator;
+    typedef MyVecIterator<T> iterator;
+    typedef MyVecIterator<const T> const_iterator;
 
 public:
     // Конструктор без параметров
@@ -91,7 +91,7 @@ public:
     };
 
 
-    size_t size() { return m_size; }
+    [[nodiscard]] size_t size() const { return m_size; }
 
 
     // Оператор добавления элемента в конец вектора
@@ -116,7 +116,7 @@ public:
     }
 
 
-    T *insert(iterator pos, const T &value) {
+    iterator insert(iterator pos, const T &value) {
         // Проверка на корректность переданного итератора
         if (pos.get() >= m_begin && pos.get() <= m_end) {
             // Вставка почти всегда вызывает реаллокацию всего массива
@@ -126,7 +126,7 @@ public:
                 T *new_pos = m_end;
                 ++m_end;
                 ++m_size;
-                return new_pos;
+                return iterator(new_pos);
             } else {
                 // Проверяем необходимость увеличить массив
                 if (m_size == m_capacity) {
@@ -151,14 +151,14 @@ public:
                 this->m_begin = temp;           // Присваиваем новые указатели
                 this->m_end = temp + m_size;
                 this->m_end_capacity = temp + m_capacity;
-                return new_pos;
+                return iterator(new_pos);
             }
         }
-        return nullptr;
+        return iterator(nullptr);
     }
 
 
-    T *erase(iterator pos) {
+    iterator erase(iterator pos) {
         // Проверка на корректность переданного итератора
         if (pos.get() >= m_begin && pos.get() < m_end) {
             // Удаление почти всегда вызывает реаллокацию всего массива
@@ -166,7 +166,7 @@ public:
             if (pos.get() == (m_end - 1)) {
                 --m_end;
                 --m_size;
-                return m_end;
+                return iterator(m_end);
             } else {
                 T *temp = new T[m_capacity]; // Выделяем новый массив
                 T *thisElem = this->m_begin;
@@ -188,10 +188,10 @@ public:
                 this->m_begin = temp;           // Присваиваем новые указатели
                 this->m_end = temp + m_size;
                 this->m_end_capacity = temp + m_capacity;
-                return new_pos;
+                return iterator(new_pos);
             }
         }
-        return nullptr;
+        return iterator(nullptr);
     }
 
 
@@ -264,18 +264,18 @@ private:
 };
 
 template<typename T>
-class Iterator {
+class MyVecIterator {
 
 public:
-    explicit Iterator(T *p) : p(p) {}
+    explicit MyVecIterator(T *p) : p(p) {}
 
-    Iterator(const Iterator &it) : p(it.p) {}
+    MyVecIterator(const MyVecIterator &it) : p(it.p) {}
 
-    bool operator!=(Iterator const &other) const {
+    bool operator!=(MyVecIterator const &other) const {
         return p != other.p;
     }
 
-    bool operator==(Iterator const &other) const {
+    bool operator==(MyVecIterator const &other) const {
         return p == other.p;
     }
 
@@ -283,22 +283,22 @@ public:
 
     T &operator*() { return *p; }
 
-    Iterator<T> &operator++() {
+    MyVecIterator<T> &operator++() {
         ++p;
         return *this;
     }
 
-    Iterator<T> &operator--() {
+    MyVecIterator<T> &operator--() {
         --p;
         return *this;
     }
 
-    Iterator<T> &operator+(int i) {
+    MyVecIterator<T> &operator+(int i) {
         p = p + i;
         return *this;
     }
 
-    Iterator<T> &operator-(int i) {
+    MyVecIterator<T> &operator-(int i) {
         p = p - i;
         return *this;
     }
@@ -307,4 +307,11 @@ private:
     T *p;
 };
 
+template<typename T>
+inline void printVec(const MyVector<T>& vec){
+    for (auto elem : vec) {
+        std::cout << elem << " ";
+    }
+    std::cout << "\n";
+}
 #endif //CONTEINERS_MYVECTOR_H
