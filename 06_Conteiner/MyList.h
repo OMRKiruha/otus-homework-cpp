@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <iostream>
 
-//#define DEBUG
+#define DEBUG
 
 template<typename T>
 class MyList {
