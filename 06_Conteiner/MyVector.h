@@ -8,7 +8,7 @@
 template<typename T>
 class MyVecIterator;
 
-#define DEBUG
+//#define DEBUG
 
 template<typename T>
 class MyVector {
