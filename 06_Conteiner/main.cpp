@@ -6,159 +6,73 @@
 #include "MyForwardList.h"
 
 
-void testVec() {
-    std::cout << "1. Создаём объект класса MyVector<int>\n";
-    MyVector<int> vec;
+template<class T>
+T &&fillObj(size_t m) {
+    auto temp = new T;
     int i = 0;
-
-    std::cout << "2. Заполняем объект класса MyVector<int> числами от 0 до 9\n";
-    while (i < 10) {
-        vec.push_back(i);
+    while (m > 0) {
+        temp->push_back(i);
         ++i;
+        --m;
     }
-
-    std::cout << "3. Выводим на экран содержимое объекта класса MyVector<int>\n";
-    printVec(vec);
-
-    std::cout << "4. Выводим на экран размер объекта класса MyVector<int>\n";
-    std::cout << "vec.size() = " << vec.size() << "\n";
-
-    std::cout << "5. Удаляем из объекта класса MyVector<int> \n";
-    vec.erase(vec.begin() + 2);
-    vec.erase(vec.begin() + 3);
-    vec.erase(vec.begin() + 4);
-
-    std::cout << "6. Выводим на экран содержимое объекта класса MyVector<int>\n";
-    printVec(vec);
-
-    std::cout << "7. Добавляем число 10 в начало объекта класса MyVector<int>\n";
-    vec.insert(vec.begin(), 10);
-
-    std::cout << "8. Выводим на экран содержимое объекта класса MyVector<int>\n";
-    printVec(vec);
-
-    std::cout << "9. Добавляем число 20 в середину объекта класса MyVector<int>\n";
-    vec.insert((vec.begin() + (vec.size() / 2)), 20);
-
-    std::cout << "10. Выводим на экран содержимое объекта класса MyVector<int>\n";
-    printVec(vec);
-
-    std::cout << "11. Добавляем число 30 в конец объекта класса MyVector<int>\n";
-    vec.insert(vec.end(), 30);
-
-    std::cout << "12. Выводим на экран содержимое объекта класса MyVector<int>\n";
-    printVec(vec);
-
-//    MyVector<int> vec1(vec);
-//    MyVector<int> vec2;
-//    vec2 = vec;
-    std::cout << std::endl; // Flush
+    return std::move(*temp);
 }
 
-void testList() {
-    std::cout << "1. Создаём объект класса MyList<int>\n";
-    MyList<int> list;
-    int i = 0;
+template<class T>
+void test(std::string_view className) {
 
-    std::cout << "2. Заполняем объект класса MyList<int> числами от 0 до 9\n";
-    while (i < 10) {
-        list.push_back(i);
-        ++i;
-    }
+    const int n = 4; // Индекс элемента который выводим
+    const int m = 10; // Количество элементов в контейнере
 
-    std::cout << "3. Выводим на экран содержимое объекта класса MyList<int>\n";
-    printList(list);
+    std::cout << "1. Создаём объект класса " << className << "\n";
+    T obj;
 
+    std::cout << "2. Заполняем объект класса " << className << " числами от 0 до 9\n";
+    obj = fillObj<T>(m);
 
-    std::cout << "4. Выводим на экран размер объекта класса MyList<int>\n";
-    std::cout << "list.size() = " << list.size() << "\n";
+    std::cout << "3. Выводим на экран содержимое объекта класса " << className << "\n";
+    print(obj);
 
-    std::cout << "5. Удаляем из объекта класса MyList<int> \n";
-    list.erase(list.begin() + 2);
-    list.erase(list.begin() + 3);
-    list.erase(list.begin() + 4);
+    std::cout << "4. Выводим на экран размер объекта класса " << className << "\n";
+    std::cout << "obj.size() = " << obj.size() << "\n";
 
-    std::cout << "6. Выводим на экран содержимое объекта класса MyList<int>\n";
-    printList(list);
+    std::cout << "5. Удаляем из объекта класса " << className << " \n";
+    obj.erase(obj.begin() + 2);
+    obj.erase(obj.begin() + 3);
+    obj.erase(obj.begin() + 4);
 
-    std::cout << "7. Добавляем число 10 в начало объекта класса MyList<int>\n";
-    list.insert(list.begin(), 10);
+    std::cout << "6. Выводим на экран содержимое объекта класса " << className << "\n";
+    print(obj);
 
-    std::cout << "8. Выводим на экран содержимое объекта класса MyList<int>\n";
-    printList(list);
+    std::cout << "7. Добавляем число 10 в начало объекта класса " << className << "\n";
+    obj.insert(obj.begin(), 10);
 
-    std::cout << "9. Добавляем число 20 в середину объекта класса MyList<int>\n";
-    list.insert((list.begin() + (list.size() / 2)), 20);
+    std::cout << "8. Выводим на экран содержимое объекта класса " << className << "\n";
+    print(obj);
 
-    std::cout << "10. Выводим на экран содержимое объекта класса MyList<int>\n";
-    printList(list);
+    std::cout << "9. Добавляем число 20 в середину объекта класса " << className << "\n";
+    obj.insert((obj.begin() + (obj.size() / 2)), 20);
 
-    std::cout << "11. Добавляем число 30 в конец объекта класса MyList<int>\n";
-    list.insert(list.end(), 30);
+    std::cout << "10. Выводим на экран содержимое объекта класса " << className << "\n";
+    print(obj);
 
-    std::cout << "12. Выводим на экран содержимое объекта класса MyList<int>\n";
-    printList(list);
+    std::cout << "11. Добавляем число 30 в конец объекта класса " << className << "\n";
+    obj.insert(obj.end(), 30);
 
-//    MyList<int> list1(list);
-//    MyList<int> list2;
-//    list2 = list;
-    std::cout << std::endl; // Flush
-}
+    std::cout << "12. Выводим на экран содержимое объекта класса " << className << "\n";
+    print(obj);
 
-
-void testForwardList() {
-    std::cout << "1. Создаём объект класса MyForwardList<int>\n";
-    MyForwardList<int> list;
-    int i = 0;
-
-    std::cout << "2. Заполняем объект класса MyForwardList<int> числами от 0 до 9\n";
-    while (i < 10) {
-        list.push_back(i);
-        ++i;
-    }
-
-    std::cout << "3. Выводим на экран содержимое объекта класса MyForwardList<int>\n";
-    printList(list);
-
-    std::cout << "4. Выводим на экран размер объекта класса MyForwardList<int>\n";
-    std::cout << "list.size() = " << list.size() << "\n";
-
-    std::cout << "5. Удаляем из объекта класса MyForwardList<int> \n";
-    list.erase(list.begin() + 2);
-    list.erase(list.begin() + 3);
-    list.erase(list.begin() + 4);
-
-    std::cout << "6. Выводим на экран содержимое объекта класса MyForwardList<int>\n";
-    printList(list);
-
-    std::cout << "7. Добавляем число 10 в начало объекта класса MyForwardList<int>\n";
-    list.insert(list.begin(), 10);
-
-    std::cout << "8. Выводим на экран содержимое объекта класса MyForwardList<int>\n";
-    printList(list);
-
-    std::cout << "9. Добавляем число 20 в середину объекта класса MyForwardList<int>\n";
-    list.insert((list.begin() + (list.size() / 2)), 20);
-
-    std::cout << "10. Выводим на экран содержимое объекта класса MyForwardList<int>\n";
-    printList(list);
-
-    std::cout << "11. Добавляем число 30 в конец объекта класса MyForwardList<int>\n";
-    list.insert(list.end(), 30);
-
-    std::cout << "12. Выводим на экран содержимое объекта класса MyForwardList<int>\n";
-    printList(list);
-
-//    MyList<int> list1(list);
-//    MyList<int> list2;
-//    list2 = list;
+    T obj1(obj);
+    T obj2(obj1);
+    obj2 = obj;
+    std::cout << className << " obj[" << n << "] = " << obj[n] << std::endl; // Проверка оператора индекса
     std::cout << std::endl; // Flush
 }
 
 int main() {
-    testVec();
-    testList();
-    testForwardList();
+    test<MyVector<int>>("MyVector<int>");
+    test<MyList<int>>("MyList<int>");
+    test<MyForwardList<int>>("MyForwardList<int>");
 
     return 0;
 }

@@ -105,6 +105,18 @@ public:
         copy_elements_from(other);
     }
 
+    // Конструктор перемещения
+    MyList(const MyList<T> &&other)  noexcept {
+#ifdef DEBUG
+        std::cout << "\tКонструктор перемещения\n";
+#endif
+        // Очищаем текущий объект
+        delete_elements();
+        // Присваиваем чужие указатели
+        this->m_begin = other.m_begin;
+        this->m_end = other.m_end;
+        this->m_size = other.m_size;
+    }
 
     //Деструктор
     ~MyList() {
@@ -141,6 +153,7 @@ public:
         this->m_begin = other.m_begin;
         this->m_end = other.m_end;
         this->m_size = other.m_size;
+        return *this;
     }
 
 
@@ -318,7 +331,7 @@ private:
 };
 
 template<typename T>
-inline void printList(const MyList<T> &list) {
+inline void print(const MyList<T> &list) {
     for (auto elem: list) {
         std::cout << elem << " ";
     }

@@ -81,6 +81,19 @@ public:
     }
 
 
+    // Конструктор перемещения
+    MyForwardList(const MyForwardList<T> &&other)  noexcept {
+#ifdef DEBUG
+        std::cout << "\tКонструктор перемещения\n";
+#endif
+        // Очищаем текущий объект
+        delete_elements();
+        // Присваиваем чужие указатели
+        this->m_begin = other.m_begin;
+        this->m_size = other.m_size;
+    }
+
+
     // Конструктор копирования
     MyForwardList(const MyForwardList<T> &other) {
 #ifdef DEBUG
@@ -124,6 +137,7 @@ public:
         // Присваиваем чужие указатели и поля
         this->m_begin = other.m_begin;
         this->m_size = other.m_size;
+        return *this;
     }
 
 
@@ -307,7 +321,7 @@ private:
 };
 
 template<typename T>
-inline void printList(const MyForwardList<T> &list) {
+inline void print(const MyForwardList<T> &list) {
     for (auto elem: list) {
         std::cout << elem << " ";
     }

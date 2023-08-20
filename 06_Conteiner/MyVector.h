@@ -41,6 +41,22 @@ public:
     }
 
 
+    // Конструктор перемещения
+    MyVector(const MyVector<T> &&other)  noexcept {
+#ifdef DEBUG
+        std::cout << "\tКонструктор перемещения\n";
+#endif
+        // Очищаем текущий объект
+        delete_elements();
+        // Присваиваем чужие указатели и поля
+        this->m_begin = other.m_begin;
+        this->m_end = other.m_end;
+        this->m_end_capacity = other.m_end_capacity;
+        this->m_size = other.m_size;
+        this->m_capacity = other.m_capacity;
+    }
+
+
     //Деструктор
     ~MyVector() {
 #ifdef DEBUG
@@ -87,6 +103,7 @@ public:
         this->m_end_capacity = other.m_end_capacity;
         this->m_size = other.m_size;
         this->m_capacity = other.m_capacity;
+        return *this;
     };
 
 
@@ -307,7 +324,7 @@ private:
 };
 
 template<typename T>
-inline void printVec(const MyVector<T>& vec){
+inline void print(const MyVector<T>& vec){
     for (auto elem : vec) {
         std::cout << elem << " ";
     }
