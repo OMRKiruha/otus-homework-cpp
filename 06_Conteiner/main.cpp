@@ -3,7 +3,7 @@
 
 #include "MyVector.h"
 #include "MyList.h"
-#include <list>
+#include "MyForwardList.h"
 
 
 void testVec() {
@@ -52,7 +52,7 @@ void testVec() {
 //    MyVector<int> vec1(vec);
 //    MyVector<int> vec2;
 //    vec2 = vec;
-//    std::cout << std::endl; // Flush
+    std::cout << std::endl; // Flush
 }
 
 void testList() {
@@ -102,12 +102,63 @@ void testList() {
 //    MyList<int> list1(list);
 //    MyList<int> list2;
 //    list2 = list;
-//    std::cout << std::endl; // Flush
+    std::cout << std::endl; // Flush
+}
+
+
+void testForwardList() {
+    std::cout << "1. Создаём объект класса MyForwardList<int>\n";
+    MyForwardList<int> list;
+    int i = 0;
+
+    std::cout << "2. Заполняем объект класса MyForwardList<int> числами от 0 до 9\n";
+    while (i < 10) {
+        list.push_back(i);
+        ++i;
+    }
+
+    std::cout << "3. Выводим на экран содержимое объекта класса MyForwardList<int>\n";
+    printList(list);
+
+    std::cout << "4. Выводим на экран размер объекта класса MyForwardList<int>\n";
+    std::cout << "list.size() = " << list.size() << "\n";
+
+    std::cout << "5. Удаляем из объекта класса MyForwardList<int> \n";
+    list.erase(list.begin() + 2);
+    list.erase(list.begin() + 3);
+    list.erase(list.begin() + 4);
+
+    std::cout << "6. Выводим на экран содержимое объекта класса MyForwardList<int>\n";
+    printList(list);
+
+    std::cout << "7. Добавляем число 10 в начало объекта класса MyForwardList<int>\n";
+    list.insert(list.begin(), 10);
+
+    std::cout << "8. Выводим на экран содержимое объекта класса MyForwardList<int>\n";
+    printList(list);
+
+    std::cout << "9. Добавляем число 20 в середину объекта класса MyForwardList<int>\n";
+    list.insert((list.begin() + (list.size() / 2)), 20);
+
+    std::cout << "10. Выводим на экран содержимое объекта класса MyForwardList<int>\n";
+    printList(list);
+
+    std::cout << "11. Добавляем число 30 в конец объекта класса MyForwardList<int>\n";
+    list.insert(list.end(), 30);
+
+    std::cout << "12. Выводим на экран содержимое объекта класса MyForwardList<int>\n";
+    printList(list);
+
+//    MyList<int> list1(list);
+//    MyList<int> list2;
+//    list2 = list;
+    std::cout << std::endl; // Flush
 }
 
 int main() {
     testVec();
     testList();
+    testForwardList();
 
     return 0;
 }

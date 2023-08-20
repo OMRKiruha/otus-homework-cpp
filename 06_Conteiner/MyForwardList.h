@@ -1,6 +1,6 @@
 
-#ifndef CONTEINERS_MYLIST_H
-#define CONTEINERS_MYLIST_H
+#ifndef CONTEINERS_MYFORWARDLIST_H
+#define CONTEINERS_MYFORWARDLIST_H
 
 #include <cstddef>
 #include <iostream>
@@ -8,28 +8,27 @@
 //#define DEBUG
 
 template<typename T>
-class MyList {
+class MyForwardList {
 
     template<typename U>
     struct Node {
 
         U data{}; // пользовательские данные (хранимый объект)
-        Node<U> *prev = nullptr; // указатель на предыдущий элемент Node
         Node<U> *next = nullptr; // указатель на следующий элемент Node
 
-        explicit Node(const U &value, Node<U> *prev = nullptr, Node<U> *next = nullptr) :
-                data(value), prev(prev), next(next) {}
+        explicit Node(const U &value, Node<U> *next = nullptr) :
+                data(value), next(next) {}
     };
 
 public:
     template<typename V>
-    class MyListIterator {
-        friend class MyList<V>;
+    class MyForvardListIterator {
+        friend class MyForwardList<V>;
 
     public:
-        MyListIterator() : pNode(new Node<T>{}) {}
+        MyForvardListIterator() : pNode(new Node<T>{}) {}
 
-        explicit MyListIterator(Node<T> *p) : pNode(p) {}
+        explicit MyForvardListIterator(Node<T> *p) : pNode(p) {}
 
         V &operator*() { return static_cast<Node<T> *>(pNode)->data; }
 
@@ -37,33 +36,20 @@ public:
 
         V &get() { return *static_cast<Node<T> *>(pNode)->data; }
 
-        bool operator!=(MyListIterator const &other) const { return pNode != other.pNode; }
+        bool operator!=(MyForvardListIterator const &other) const { return pNode != other.pNode; }
 
         bool operator!=(std::nullptr_t const &other) const { return pNode != nullptr; }
 
-        bool operator==(MyListIterator const &other) const { return pNode == other.pNode; }
+        bool operator==(MyForvardListIterator const &other) const { return pNode == other.pNode; }
 
-        MyListIterator<V> &operator++() {
+        MyForvardListIterator<V> &operator++() {
             pNode = pNode->next;
             return *this;
         }
 
-        MyListIterator<V> &operator--() {
-            pNode = pNode->prev;
-            return *this;
-        }
-
-        MyListIterator<V> &operator+(int i) {
+        MyForvardListIterator<V> &operator+(int i) {
             while (i != 0) {
                 if (pNode->next != nullptr) pNode = pNode->next;
-                --i;
-            }
-            return *this;
-        }
-
-        MyListIterator<V> &operator-(int i) {
-            while (i != 0) {
-                if (pNode->prev != nullptr) pNode = pNode->prev;
                 --i;
             }
             return *this;
@@ -77,28 +63,26 @@ public:
         }
     };
 
-    typedef MyListIterator<T> iterator;
-    typedef MyListIterator<const T> const_iterator;
+    typedef MyForvardListIterator<T> iterator;
+    typedef MyForvardListIterator<const T> const_iterator;
 
 private:
     Node<T> *m_begin = nullptr;
-    Node<T> *m_end = nullptr;
     size_t m_size{};
 
 public:
     // Конструктор без параметров
-    MyList() {
+    MyForwardList() {
 #ifdef DEBUG
         std::cout << "\tКонструктор без параметров (по умолчанию)\n";
 #endif
         m_begin = nullptr;
-        m_end = m_begin;
         m_size = 0;
     }
 
 
     // Конструктор копирования
-    MyList(const MyList<T> &other) {
+    MyForwardList(const MyForwardList<T> &other) {
 #ifdef DEBUG
         std::cout << "\tКонструктор копирования\n";
 #endif
@@ -107,7 +91,7 @@ public:
 
 
     //Деструктор
-    ~MyList() {
+    ~MyForwardList() {
 #ifdef DEBUG
         std::cout << "\tДеструктор\n";
 #endif
@@ -116,7 +100,7 @@ public:
 
 
     // Оператор присваивания копированием
-    MyList<T> &operator=(const MyList<T> &other) {
+    MyForwardList<T> &operator=(const MyForwardList<T> &other) {
 #ifdef DEBUG
         std::cout << "\tОператор присваивания копированием\n";
 #endif
@@ -131,7 +115,7 @@ public:
 
 
     // Оператор присваивания перемещением
-    MyList<T> &operator=(MyList<T> &&other) noexcept {
+    MyForwardList<T> &operator=(MyForwardList<T> &&other) noexcept {
 #ifdef DEBUG
         std::cout << "\tОператор присваивания перемещением\n";
 #endif
@@ -139,7 +123,6 @@ public:
         delete_elements();
         // Присваиваем чужие указатели и поля
         this->m_begin = other.m_begin;
-        this->m_end = other.m_end;
         this->m_size = other.m_size;
     }
 
@@ -152,14 +135,11 @@ public:
         auto *newNode = new Node<T>(value);    // Создаём новую ноду
         if (m_size == 0) {
             this->m_begin = newNode;
-            this->m_end = m_begin;
             this->m_size++;
         } else {
-            //Node *current = this->m_begin;
-            //while (current->next != nullptr) { current = current->next; }
-            newNode->prev = m_end;      // В последнюю ячейку присваиваем предыдущий конец
-            m_end->next = newNode;      // В предыдущий конец присваиваем текущую ноду
-            this->m_end = newNode;      // В конец листа присваиваем адрес новой ноды
+            Node<T> *current = this->m_begin;
+            while (current->next != nullptr) { current = current->next; }
+            current->next = newNode;      // В предыдущий конец присваиваем текущую ноду
             this->m_size++;
         }
     }
@@ -170,28 +150,29 @@ public:
         auto *newNode = new Node<T>(value);    // Создаём новую ноду
         if (m_size == 0) {
             this->m_begin = newNode;
-            this->m_end = m_begin;
             this->m_size++;
         } else {
             newNode->next = m_begin;      // В первую ячейку присваиваем предыдущее начало
-            m_begin->prev = newNode;      // В предыдущее начало присваиваем текущую ноду
             this->m_begin = newNode;      // В начало листа присваиваем адрес новой ноды
             this->m_size++;
         }
     }
 
 
-    // Оператор удаления элемента из конца вектора
+    // Оператор удаления элемента из конца списка
     void pop_back() {
-        if (m_end->prev != nullptr) {
-            Node<T> *new_end = m_end->prev;
-            delete this->m_end;
-            this->m_end = new_end;    // Присваиваем новые указатели
-            m_end->next = nullptr;
+        Node<T> *current = this->m_begin;
+        Node<T> *prev = this->m_begin;
+        while (current->next != nullptr) {
+            prev = current;
+            current = current->next;
+        }
+        if (current != m_begin) { // Если удаляем не последний элемент
+            delete current;
+            prev->next = nullptr;    // Присваиваем новые указатели
             --m_size;
-        } else {
-            delete this->m_end;
-            this->m_end = nullptr;    // Зануляем указатели
+        } else {    // Если удаляем последний элемент
+            delete current;
             this->m_begin = nullptr;
             --m_size;
         }
@@ -199,16 +180,10 @@ public:
 
     // Оператор удаления элемента из начала списка
     void pop_front() {
-        if (m_begin->next != nullptr) { // Если удаляем не последний элемент
+        if (m_begin != nullptr) { // Если удаляем не последний элемент
             Node<T> *new_begin = m_begin->next;
-            delete this->m_begin;
-            this->m_begin = new_begin;    // Присваиваем новые указатели
-            m_begin->prev = nullptr;
-            --m_size;
-        } else {
-            delete this->m_begin;
-            this->m_end = nullptr;    // Зануляем указатели
-            this->m_begin = nullptr;
+            delete m_begin;
+            m_begin = new_begin;    // Присваиваем новые указатели
             --m_size;
         }
     }
@@ -224,7 +199,7 @@ public:
             }
             return it->data;
         }
-        throw (std::out_of_range("Проверьте правильность индекса объекта MyList"));
+        throw (std::out_of_range("Проверьте правильность индекса объекта MyForwardList"));
     }
 
 
@@ -239,20 +214,28 @@ public:
             }
             return it->data;
         }
-        throw (std::out_of_range("Проверьте правильность индекса объекта MyList"));
+        throw (std::out_of_range("Проверьте правильность индекса объекта MyForwardList"));
     }
 
 
     iterator begin() { return iterator(m_begin); }
 
-    iterator end() { return iterator(m_end->next); }
+    iterator end() {
+        Node<T> *current = this->m_begin;
+        while (current->next != nullptr) { current = current->next; }
+        return iterator(current->next);
+    }
 
     const_iterator begin() const { return const_iterator(m_begin); }
 
-    const_iterator end() const { return const_iterator(m_end->next); }
-
+    const_iterator end() const {
+        Node<T> *current = this->m_begin;
+        while (current->next != nullptr) { current = current->next; }
+        return const_iterator(current->next);
+    }
 
     iterator erase(iterator pos) {
+        Node<T> *next = pos.node()->next;
         // Удаление из начала
         if (pos == begin()) {
             pop_front();
@@ -260,16 +243,19 @@ public:
             pop_back();
         } else {        // Удаление из середины
             // Находим предыдущий и следующий элементы
-            Node<T> *prev = pos.node()->prev;
-            Node<T> *next = pos.node()->next;
+            Node<T> *current = this->m_begin;
+            Node<T> *prev = this->m_begin;
+            while (current != pos.node()) {
+                prev = current;
+                current = current->next;
+            }
             // Присваиваем новые указатели в обход удаляемого элемента
             prev->next = next;
-            next->prev = prev;
             --m_size;
             // Удаляем старый элемент
             delete pos.node();
         }
-        return ++pos;
+        return iterator(next);
     }
 
     iterator insert(iterator pos, const T &value) {
@@ -279,14 +265,17 @@ public:
         } else if (pos == end()) { // Вставка в конец
             push_back(value);
         } else {        // Вставка в произвольное место
-            // Находим предыдущий и следующий элементы
-            Node<T> *prev = pos.node()->prev;
+            // Находим предыдущий элемент
+            Node<T> *current = this->m_begin;
+            Node<T> *prev = this->m_begin;
+            while (current != pos.node()) {
+                prev = current;
+                current = current->next;
+            }
             Node<T> *next = pos.node();
-            // Присваиваем новые указатели в обход удаляемого элемента
+            // Присваиваем новые указатели включая добавляемый элемент
             auto temp = new Node<T>(value);
             prev->next = temp;
-            next->prev = temp;
-            temp->prev = prev;
             temp->next = next;
             ++m_size;
         }
@@ -294,7 +283,7 @@ public:
     }
 
 private:
-    void copy_elements_from(const MyList<T> &other) {
+    void copy_elements_from(const MyForwardList<T> &other) {
 #ifdef DEBUG
         std::cout << "\tКопируем элементы из другого объекта\n";
 #endif
@@ -311,18 +300,18 @@ private:
         std::cout << "\tУдаляем элементы. Size = " << m_size << "\n";
 #endif
         while (m_size > 0) {
-            pop_back();
+            pop_front();
         }
     }
 
 };
 
 template<typename T>
-inline void printList(const MyList<T> &list) {
+inline void printList(const MyForwardList<T> &list) {
     for (auto elem: list) {
         std::cout << elem << " ";
     }
     std::cout << "\n";
 }
 
-#endif //CONTEINERS_MYLIST_H
+#endif //CONTEINERS_MYFORWARDLIST_H
