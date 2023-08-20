@@ -1,17 +1,14 @@
-//
-// Created by Professional on 17.08.2023.
-//
 
 #ifndef CONTEINERS_MYLIST_H
 #define CONTEINERS_MYLIST_H
+
+#define DEBUG
 
 template<typename T>
 class MyList {
 
     template<typename U>
     struct Node {
-//    friend class MyList<T>;
-//    friend class MyListIterator<T>;
 
         U data{}; // пользовательские данные (хранимый объект)
         Node<U> *prev = nullptr; // указатель на предыдущий элемент Node
@@ -27,33 +24,35 @@ public:
         friend class MyList<V>;
 
     public:
-        explicit MyListIterator(Node<V> *p) : p(p) {}
+        MyListIterator() : pNode(new Node<T>{}) {}
 
-        //explicit MyListIterator(Node<const V> *p) : p(p) {}
+        explicit MyListIterator(Node<T> *p) : pNode(p) {}
 
-        MyListIterator(const MyListIterator &it) : p(it.p) {}
+        V &operator*() { return static_cast<Node<T> *>(pNode)->data; }
 
-        bool operator!=(MyListIterator const &other) const { return p != other.p; }
+        V *operator->() { return &static_cast<Node<T> *>(pNode)->data; }
 
-        bool operator==(MyListIterator const &other) const { return p == other.p; }
+        V &get() { return *static_cast<Node<T> *>(pNode)->data; }
 
-        V &get() { return (p->data); }
+        bool operator!=(MyListIterator const &other) const { return pNode != other.pNode; }
 
-        V &operator*() { return (p->data); }
+        bool operator!=(std::nullptr_t const &other) const { return pNode != nullptr; }
+
+        bool operator==(MyListIterator const &other) const { return pNode == other.pNode; }
 
         MyListIterator<V> &operator++() {
-            p = p->next;
+            pNode = pNode->next;
             return *this;
         }
 
         MyListIterator<V> &operator--() {
-            p = p->prev;
+            pNode = pNode->prev;
             return *this;
         }
 
         MyListIterator<V> &operator+(int i) {
             while (i != 0) {
-                if (p->next != nullptr) p = p->next;
+                if (pNode->next != nullptr) pNode = pNode->next;
                 --i;
             }
             return *this;
@@ -61,23 +60,22 @@ public:
 
         MyListIterator<V> &operator-(int i) {
             while (i != 0) {
-                if (p->prev != nullptr) p = p->prev;
+                if (pNode->prev != nullptr) pNode = pNode->prev;
                 --i;
             }
             return *this;
         }
 
     private:
-        Node<V> *p;
+        Node<T> *pNode;
 
-        Node<V> *node() {
-            return p;
+        Node<T> *node() {
+            return pNode;
         }
     };
 
     typedef MyListIterator<T> iterator;
     typedef MyListIterator<const T> const_iterator;
-//    friend class MyListIterator<T>;
 
 private:
     Node<T> *m_begin = nullptr;
@@ -231,7 +229,7 @@ public:
 
     iterator end() { return iterator(m_end); }
 
-    const_iterator begin() const { return const_iterator(*m_begin); }
+    const_iterator begin() const { return const_iterator(m_begin); }
 
     const_iterator end() const { return const_iterator(m_end); }
 
@@ -275,16 +273,17 @@ private:
 #ifdef DEBUG
         std::cout << "\tКопируем элементы из другого объекта\n";
 #endif
-        Node<T> *otherElem = other.m_begin;
-        while (otherElem != other.m_end) {
-            push_back(otherElem->data);
+        auto otherElem = other.begin();
+        while (otherElem != nullptr) {
+            push_back(*otherElem);
+            ++otherElem;
         }
     }
 
     // Удаляем элементы
     void delete_elements() {
 #ifdef DEBUG
-        std::cout << "\tУдаляем элементы. Size = " << m_size << " Capacity = " << m_capacity << "\n";
+        std::cout << "\tУдаляем элементы. Size = " << m_size << "\n";
 #endif
         while (m_size > 0) {
             pop_back();
@@ -293,17 +292,9 @@ private:
 
 };
 
-//template<typename T>
-//inline void printList(const MyList<T> &list) {
-//    for (size_t i = 0; i < list.size(); i++) {
-//        std::cout << list[i] << " ";
-//    }
-//    std::cout << "\n";
-//}
-
 template<typename T>
 inline void printList(const MyList<T> &list) {
-    for (auto elem: list) {
+    for (auto elem : list) {
         std::cout << elem << " ";
     }
     std::cout << "\n";

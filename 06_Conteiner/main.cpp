@@ -6,7 +6,6 @@
 #include <list>
 
 
-
 void testVec() {
     std::cout << "1. Создаём объект класса MyVector<int>\n";
     MyVector<int> vec;
@@ -50,13 +49,13 @@ void testVec() {
     std::cout << "12. Выводим на экран содержимое объекта класса MyVector<int>\n";
     printVec(vec);
 
-    MyVector<int> vec1(vec);
-    MyVector<int> vec2;
-    vec2 = vec;
-    std::cout << std::endl; // Flush
+//    MyVector<int> vec1(vec);
+//    MyVector<int> vec2;
+//    vec2 = vec;
+//    std::cout << std::endl; // Flush
 }
 
-void testList(){
+void testList() {
     std::cout << "1. Создаём объект класса MyList<int>\n";
     MyList<int> list;
     int i = 0;
@@ -103,9 +102,7 @@ void testList(){
 //    MyList<int> list1(list);
 //    MyList<int> list2;
 //    list2 = list;
-
-    std::cout << std::endl; // Flush
-
+//    std::cout << std::endl; // Flush
 }
 
 int main() {
