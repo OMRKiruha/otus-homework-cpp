@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <iostream>
 
+
 template<typename T>
 class MyVecIterator;
 
@@ -22,11 +23,11 @@ public:
 #ifdef DEBUG
         std::cout << "\tКонструктор без параметров (по умолчанию)\n";
 #endif
-        m_capacity = m_min_elements;
-        m_begin = new T[m_capacity]();
+        m_capacity = 0;
         m_size = 0;
-        m_end = m_begin;
-        m_end_capacity = m_begin + m_capacity;
+        m_end = nullptr;
+        m_begin = nullptr;
+        m_end_capacity = nullptr;
     }
 
 
@@ -35,14 +36,17 @@ public:
 #ifdef DEBUG
         std::cout << "\tКонструктор копирования\n";
 #endif
-        this->m_capacity = other.m_capacity;
+        m_capacity = other.m_capacity;
+        m_size = other.m_size;
         m_begin = new T[m_capacity]();
         copy_elements_from(other);
+        m_end = m_begin + m_size;
+        m_end_capacity = m_begin + m_capacity;
     }
 
 
     // Конструктор перемещения
-    MyVector(const MyVector<T> &&other)  noexcept {
+    MyVector(const MyVector<T> &&other) noexcept {
 #ifdef DEBUG
         std::cout << "\tКонструктор перемещения\n";
 #endif
@@ -77,6 +81,7 @@ public:
         // вектора, то избегаем аллокаций
         if (this->m_capacity >= other.m_size) {
             copy_elements_from(other);
+            m_size = other.m_size;
             return *this;
         } else {
             // Если другой вектор не помещается в наш, то удаляем наш
@@ -85,6 +90,7 @@ public:
             this->m_capacity = other.m_capacity;
             m_begin = new T[m_capacity]();
             copy_elements_from(other);
+            m_size = other.m_size;
             return *this;
         }
     }
@@ -95,6 +101,8 @@ public:
 #ifdef DEBUG
         std::cout << "\tОператор присваивания перемещением\n";
 #endif
+        //Проверка на присваивание самому себе
+        if (other.m_begin == this->m_begin) { return *this; }
         // Очищаем текущий объект
         delete_elements();
         // Присваиваем чужие указатели и поля
@@ -112,6 +120,14 @@ public:
 
     // Оператор добавления элемента в конец вектора
     void push_back(const T &value) {
+        // Если память под массив ещё не выделена, то выделяем и инициализируем
+        // соответствующие переменные
+        if (m_begin == nullptr) {
+            m_capacity = m_min_elements;
+            m_begin = new T[m_capacity];
+            m_end = m_begin + m_size;
+            m_end_capacity = m_begin + m_capacity;
+        }
         // Если есть ещё место в векторе
         if (m_end != m_end_capacity) {
             *m_end = value;
@@ -324,10 +340,11 @@ private:
 };
 
 template<typename T>
-inline void print(const MyVector<T>& vec){
-    for (auto elem : vec) {
+inline void print(const MyVector<T> &vec) {
+    for (auto elem: vec) {
         std::cout << elem << " ";
     }
     std::cout << "\n";
 }
+
 #endif //CONTEINERS_MYVECTOR_H

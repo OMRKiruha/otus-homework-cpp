@@ -132,6 +132,8 @@ public:
 #ifdef DEBUG
         std::cout << "\tОператор присваивания перемещением\n";
 #endif
+        //Проверка на присваивание самому себе
+        if (other.m_begin == this->m_begin) { return *this; }
         // Очищаем текущий объект
         delete_elements();
         // Присваиваем чужие указатели и поля
@@ -249,12 +251,14 @@ public:
     }
 
     iterator erase(iterator pos) {
-        Node<T> *next = pos.node()->next;
+
         // Удаление из начала
         if (pos == begin()) {
             pop_front();
+            return begin();
         } else if (pos == end()) { // Удаление из конца
             pop_back();
+            return end();
         } else {        // Удаление из середины
             // Находим предыдущий и следующий элементы
             Node<T> *current = this->m_begin;
@@ -264,12 +268,13 @@ public:
                 current = current->next;
             }
             // Присваиваем новые указатели в обход удаляемого элемента
+            Node<T> *next = pos.node()->next;
             prev->next = next;
             --m_size;
             // Удаляем старый элемент
             delete pos.node();
+            return iterator(next);
         }
-        return iterator(next);
     }
 
     iterator insert(iterator pos, const T &value) {

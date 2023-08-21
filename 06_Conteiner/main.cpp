@@ -9,11 +9,8 @@
 template<class T>
 T &&fillObj(size_t m) {
     auto temp = new T;
-    int i = 0;
-    while (m > 0) {
+    for(size_t i = 0; i < m; ++i) {
         temp->push_back(i);
-        ++i;
-        --m;
     }
     return std::move(*temp);
 }
