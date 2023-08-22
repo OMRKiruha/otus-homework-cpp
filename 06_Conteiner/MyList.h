@@ -155,6 +155,9 @@ public:
         this->m_begin = other.m_begin;
         this->m_end = other.m_end;
         this->m_size = other.m_size;
+        other.m_begin = nullptr;
+        other.m_end = nullptr;
+        other.m_size = 0;
         return *this;
     }
 

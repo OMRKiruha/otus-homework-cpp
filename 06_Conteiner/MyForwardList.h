@@ -139,6 +139,8 @@ public:
         // Присваиваем чужие указатели и поля
         this->m_begin = other.m_begin;
         this->m_size = other.m_size;
+        other.m_begin = nullptr;
+        other.m_size = 0;
         return *this;
     }
 

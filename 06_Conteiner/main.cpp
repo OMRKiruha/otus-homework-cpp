@@ -7,12 +7,12 @@
 
 
 template<class T>
-T &&fillObj(size_t m) {
-    auto temp = new T;
+T fillObj(size_t m) {
+    T temp;
     for(size_t i = 0; i < m; ++i) {
-        temp->push_back(i);
+        temp.push_back(i);
     }
-    return std::move(*temp);
+    return temp;
 }
 
 template<class T>

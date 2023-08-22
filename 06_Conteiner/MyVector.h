@@ -111,6 +111,7 @@ public:
         this->m_end_capacity = other.m_end_capacity;
         this->m_size = other.m_size;
         this->m_capacity = other.m_capacity;
+        other.m_begin = nullptr;
         return *this;
     };
 
