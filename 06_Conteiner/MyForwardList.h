@@ -38,7 +38,7 @@ public:
 
         bool operator!=(MyForvardListIterator const &other) const { return pNode != other.pNode; }
 
-        bool operator!=(std::nullptr_t const &other) const { return pNode != nullptr; }
+        bool operator!=(std::nullptr_t const &) const { return pNode != nullptr; }
 
         bool operator==(MyForvardListIterator const &other) const { return pNode == other.pNode; }
 

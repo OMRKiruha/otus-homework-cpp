@@ -22,6 +22,8 @@ add_executable(conteiners
 target_compile_options(conteiners PUBLIC
         -g
         -Wall
+        -Wextra
+        -pedantic
         #-fsanitize=leak
         #-fsanitize=address
         #-fsanitize=undefined

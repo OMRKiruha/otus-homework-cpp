@@ -39,7 +39,7 @@ public:
 
         bool operator!=(MyListIterator const &other) const { return pNode != other.pNode; }
 
-        bool operator!=(std::nullptr_t const &other) const { return pNode != nullptr; }
+        bool operator!=(std::nullptr_t const &) const { return pNode != nullptr; }
 
         bool operator==(MyListIterator const &other) const { return pNode == other.pNode; }
 
