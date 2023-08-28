@@ -73,6 +73,7 @@ if (WITH_TESTS)
     # Link test target against gtest libraries
     target_link_libraries(containers_tests PRIVATE
             gtest
+            gmock
             gtest_main
     )
     set_target_properties(containers_tests PROPERTIES

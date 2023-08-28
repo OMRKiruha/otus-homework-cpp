@@ -1,25 +1,41 @@
 #include "../MyVector.h"
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-//===================================================================
+//= Фикстура для инициализации контейнера ===========================
+class MyVector_f : public ::testing::Test {
+protected:
+    void SetUp() override {
+
+        for (auto i = 0; i < count; ++i) {
+            vector.push_back(i);
+        }
+    }
+
+    void TearDown() override {}
+
+    MyVector<int> vector;
+    const int count = 10;
+};
+
+//= Мок для конструктора-деструктора ================================
+
+
+
+//=1=================================================================
 TEST(MyVector, Empty) {
     MyVector<int> vector;
 
     ASSERT_EQ(vector.size(), 0);
     ASSERT_EQ(vector.begin(), static_cast<MyVecIterator<int>>(nullptr));
-    ASSERT_EQ(vector.begin(), vector.end());
+    ASSERT_EQ(vector.end(), vector.begin());
 }
 
-//===================================================================
-TEST(MyVector, PushBack) {
-    const int count = 10;
-    MyVector<int> vector;
-    int sample[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+//=2=================================================================
+TEST_F(MyVector_f, PushBack) {
 
-    for (auto i = 0; i < count; ++i) {
-        vector.push_back(i);
-    }
+    int sample[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
     ASSERT_EQ(vector.size(), count);
     for (auto i = 0; i < count; ++i) {
@@ -27,15 +43,9 @@ TEST(MyVector, PushBack) {
     }
 }
 
-//===================================================================
-TEST(MyVector, InsertFront) {
-    const size_t count = 10;
-    MyVector<size_t> vector;
+//=3=================================================================
+TEST_F(MyVector_f, InsertFront) {
     int sample[] = {10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-
-    for (size_t i = 0; i < count; ++i) {
-        vector.push_back(i);
-    }
 
     vector.insert(vector.begin(), 10);
 
@@ -45,15 +55,9 @@ TEST(MyVector, InsertFront) {
     }
 }
 
-//===================================================================
-TEST(MyVector, InsertBack) {
-    const size_t count = 10;
-    MyVector<size_t> vector;
+//=4=================================================================
+TEST_F(MyVector_f, InsertBack) {
     int sample[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 20};
-
-    for (size_t i = 0; i < count; ++i) {
-        vector.push_back(i);
-    }
 
     vector.insert(vector.end(), 20);
 
@@ -63,15 +67,9 @@ TEST(MyVector, InsertBack) {
     }
 }
 
-//===================================================================
-TEST(MyVector, InsertMid) {
-    const size_t count = 10;
-    MyVector<size_t> vector;
+//=5=================================================================
+TEST_F(MyVector_f, InsertMid) {
     int sample[] = {0, 1, 2, 3, 4, 30, 5, 6, 7, 8, 9};
-
-    for (size_t i = 0; i < count; ++i) {
-        vector.push_back(i);
-    }
 
     vector.insert((vector.begin() + (vector.size() / 2)), 30);
 
@@ -81,15 +79,9 @@ TEST(MyVector, InsertMid) {
     }
 }
 
-//===================================================================
-TEST(MyVector, EraseFront) {
-    const size_t count = 10;
-    MyVector<size_t> vector;
+//=6=================================================================
+TEST_F(MyVector_f, EraseFront) {
     int sample[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-
-    for (size_t i = 0; i < count; ++i) {
-        vector.push_back(i);
-    }
 
     vector.erase(vector.begin());
 
@@ -99,15 +91,9 @@ TEST(MyVector, EraseFront) {
     }
 }
 
-//===================================================================
-TEST(MyVector, EraseBack) {
-    const size_t count = 10;
-    MyVector<size_t> vector;
+//=7=================================================================
+TEST_F(MyVector_f, EraseBack) {
     int sample[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-
-    for (size_t i = 0; i < count; ++i) {
-        vector.push_back(i);
-    }
 
     vector.erase(vector.end() - 1);
 
@@ -117,15 +103,9 @@ TEST(MyVector, EraseBack) {
     }
 }
 
-//===================================================================
-TEST(MyVector, EraseMid) {
-    const size_t count = 10;
-    MyVector<size_t> vector;
+//=8=================================================================
+TEST_F(MyVector_f, EraseMid) {
     int sample[] = {0, 1, 2, 3, 4, 6, 7, 8, 9};
-
-    for (size_t i = 0; i < count; ++i) {
-        vector.push_back(i);
-    }
 
     vector.erase((vector.begin() + (vector.size() / 2)));
 
@@ -135,8 +115,75 @@ TEST(MyVector, EraseMid) {
     }
 }
 
+//=9=================================================================
+TEST_F(MyVector_f, GetElementOutOfRange) {
+
+    ASSERT_THROW(vector[count], std::out_of_range);
+    ASSERT_THROW(vector[-count], std::out_of_range);
+}
+
+//=10=================================================================
+TEST(MyVector, CopyContainer) {
+    const size_t count = 10;
+    MyVector<size_t> vector;
+    MyVector<size_t> vec2;
+    int sample[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    for (size_t i = 0; i < count; ++i) {
+        vector.push_back(i);
+    }
+    vec2 = vector;
+
+    ASSERT_EQ(vector.size(), vec2.size());
+    for (size_t i = 0; i < vector.size(); ++i) {
+        ASSERT_EQ(vector[i], sample[i]);
+        ASSERT_EQ(vec2[i], vector[i]);
+    }
+}
+
+//=11=================================================================
+//TEST(MyVector, MoveContainer) {
+//    const size_t count = 10;
+//    MyVector<size_t> vector;
+//    MyVector<size_t> vec2;
+//    int sample[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+//
+//    for (size_t i = 0; i < count; ++i) {
+//        vector.push_back(i);
+//    }
+//    vec2 = std::move(vector);
+//
+//    EXPECT_CALL(vec2, )
+//    ASSERT_EQ(vector.size(), vec2.size());
+//    for (auto i = 0; i < vector.size(); ++i) {
+//        ASSERT_EQ(vector[i], sample[i]);
+//        ASSERT_EQ(vec2[i], vector[i]);
+//    }
+//}
+
+//=11=================================================================
+//TEST(MyVector, RightDestructor) {
+//    const size_t count = 10;
+//    MyVector<size_t> vector;
+//    MyVector<size_t> vec2;
+//    int sample[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+//
+//    for (size_t i = 0; i < count; ++i) {
+//        vector.push_back(i);
+//    }
+//    vec2 = std::move(vector);
+//
+//    EXPECT_CALL(vec2, )
+//    ASSERT_EQ(vector.size(), vec2.size());
+//    for (auto i = 0; i < vector.size(); ++i) {
+//        ASSERT_EQ(vector[i], sample[i]);
+//        ASSERT_EQ(vec2[i], vector[i]);
+//    }
+//}
+
 int main(int argc, char **argv) {
     testing::FLAGS_gtest_color = "yes";
     testing::InitGoogleTest(&argc, argv);
+    testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 }
