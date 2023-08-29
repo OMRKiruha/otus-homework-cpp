@@ -18,10 +18,10 @@ endif()
 
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++ -static-liblsan -static-libasan -static-libubsan -static-libgcc") # для того чтобы можно было запускать приложение в Windows двойным
+    set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++ -static-liblsan -static-libgcc") # для того чтобы можно было запускать приложение в Windows двойным
     #кликом и из командной строки без прописывания в PATH путей к бинарникам libstdc++
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "CLANG")
-    set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++ -static-liblsan -static-libasan -static-libubsan -static-libgcc") # для того чтобы можно было запускать приложение в Windows двойным
+    set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++ -static-liblsan -static-libgcc") # для того чтобы можно было запускать приложение в Windows двойным
     #кликом и из командной строки без прописывания в PATH путей к бинарникам libstdc++
 elseif(...)
 

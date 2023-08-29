@@ -20,7 +20,25 @@ protected:
 };
 
 //= Мок для конструктора-деструктора ================================
+template<typename T>
+class mockObj {
+    T data{};
+public:
+    mockObj() = default;
 
+    mockObj(const mockObj &other) : data(other.data) {};
+
+    explicit mockObj(T t) : data(t) {};
+
+    ~mockObj() { onDtor(); };
+
+    mockObj<T> &operator=(const mockObj<T> &other) {
+        data = other.data;
+        return *this;
+    };
+
+    MOCK_METHOD0(onDtor, void());
+};
 
 
 //=1=================================================================
@@ -142,26 +160,20 @@ TEST(MyVector, CopyContainer) {
 }
 
 //=11=================================================================
-//TEST(MyVector, MoveContainer) {
-//    const size_t count = 10;
-//    MyVector<size_t> vector;
-//    MyVector<size_t> vec2;
-//    int sample[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-//
-//    for (size_t i = 0; i < count; ++i) {
-//        vector.push_back(i);
-//    }
-//    vec2 = std::move(vector);
-//
-//    EXPECT_CALL(vec2, )
-//    ASSERT_EQ(vector.size(), vec2.size());
-//    for (auto i = 0; i < vector.size(); ++i) {
-//        ASSERT_EQ(vector[i], sample[i]);
-//        ASSERT_EQ(vec2[i], vector[i]);
-//    }
-//}
+TEST(MyVector, InvokeElementDtor) {
+    const size_t count = 10;
+    MyVector<mockObj<size_t>> vector;
 
-//=11=================================================================
+    for (size_t i = 0; i < count; ++i) {
+        vector.push_back(mockObj<size_t>(i));
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        EXPECT_CALL(vector[i], onDtor());
+    }
+}
+
+//=12=================================================================
 //TEST(MyVector, RightDestructor) {
 //    const size_t count = 10;
 //    MyVector<size_t> vector;
