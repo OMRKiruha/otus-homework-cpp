@@ -66,8 +66,11 @@ if (WITH_TESTS)
     endif()
 
     # Test target
+    set(test_DIR ${CMAKE_CURRENT_LIST_DIR}/tests/)
     add_executable(containers_tests
-            ${CMAKE_CURRENT_LIST_DIR}/tests/MyVector_tests.cpp
+            ${test_DIR}/MyVector_tests.cpp
+            ${test_DIR}/MyList_tests.cpp
+            ${test_DIR}/main_tests.cpp
     )
 
     # Link test target against gtest libraries
@@ -75,6 +78,7 @@ if (WITH_TESTS)
             gtest
             gmock
             gtest_main
+            gmock_main
     )
     set_target_properties(containers_tests PROPERTIES
             CXX_STANDARD 20

@@ -21,18 +21,18 @@ protected:
 
 //= Мок для конструктора-деструктора ================================
 template<typename T>
-class mockObj {
+class mockObjForVec {
     T data{};
 public:
-    mockObj() = default;
+    mockObjForVec() = default;
 
-    mockObj(const mockObj &other) : data(other.data) {};
+    mockObjForVec(const mockObjForVec &other) : data(other.data) {};
 
-    explicit mockObj(T t) : data(t) {};
+    explicit mockObjForVec(T t) : data(t) {};
 
-    ~mockObj() { onDtor(); };
+    ~mockObjForVec() { onDtor(); };
 
-    mockObj<T> &operator=(const mockObj<T> &other) {
+    mockObjForVec<T> &operator=(const mockObjForVec<T> &other) {
         data = other.data;
         return *this;
     };
@@ -162,10 +162,10 @@ TEST(MyVector, CopyContainer) {
 //=11=================================================================
 TEST(MyVector, InvokeElementDtor) {
     const size_t count = 10;
-    MyVector<mockObj<size_t>> vector;
+    MyVector<mockObjForVec<size_t>> vector;
 
     for (size_t i = 0; i < count; ++i) {
-        vector.push_back(mockObj<size_t>(i));
+        vector.push_back(mockObjForVec<size_t>(i));
     }
 
     for (size_t i = 0; i < count; ++i) {
@@ -173,29 +173,10 @@ TEST(MyVector, InvokeElementDtor) {
     }
 }
 
-//=12=================================================================
-//TEST(MyVector, RightDestructor) {
-//    const size_t count = 10;
-//    MyVector<size_t> vector;
-//    MyVector<size_t> vec2;
-//    int sample[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-//
-//    for (size_t i = 0; i < count; ++i) {
-//        vector.push_back(i);
-//    }
-//    vec2 = std::move(vector);
-//
-//    EXPECT_CALL(vec2, )
-//    ASSERT_EQ(vector.size(), vec2.size());
-//    for (auto i = 0; i < vector.size(); ++i) {
-//        ASSERT_EQ(vector[i], sample[i]);
-//        ASSERT_EQ(vec2[i], vector[i]);
-//    }
-//}
 
-int main(int argc, char **argv) {
-    testing::FLAGS_gtest_color = "yes";
-    testing::InitGoogleTest(&argc, argv);
-    testing::InitGoogleMock(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+//int main(int argc, char **argv) {
+//    testing::FLAGS_gtest_color = "yes";
+//    testing::InitGoogleTest(&argc, argv);
+//    testing::InitGoogleMock(&argc, argv);
+//    return RUN_ALL_TESTS();
+//}
