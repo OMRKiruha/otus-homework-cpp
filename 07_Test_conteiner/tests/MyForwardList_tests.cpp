@@ -115,12 +115,13 @@ TEST_F(MyForwardList_f, EraseFront) {
     }
 }
 
+
 //=7=================================================================
 TEST_F(MyForwardList_f, EraseBack) {
     int sample[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
     auto last = list.begin();
-    for (auto i = 0; i < list.size() - 1; ++i) {
+    for (size_t i = 0; i < list.size() - 1; ++i) {
         ++last;
     }
     list.erase(last);
