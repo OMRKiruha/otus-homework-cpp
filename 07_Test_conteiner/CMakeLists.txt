@@ -71,7 +71,7 @@ if (WITH_TESTS)
             ${test_DIR}/MyVector_tests.cpp
             ${test_DIR}/MyList_tests.cpp
             ${test_DIR}/main_tests.cpp
-    )
+            ${test_DIR}/MyForwardList_tests.cpp)
 
     # Link test target against gtest libraries
     target_link_libraries(containers_tests PRIVATE

@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <list>
 
 #include "MyVector.h"
 #include "MyList.h"
@@ -70,6 +71,8 @@ int main() {
     test<MyVector<int>>("MyVector<int>");
     test<MyList<int>>("MyList<int>");
     test<MyForwardList<int>>("MyForwardList<int>");
+
+    std::list<int> list{1,23,3};
 
     return 0;
 }

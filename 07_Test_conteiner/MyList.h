@@ -165,19 +165,21 @@ public:
     [[nodiscard]] size_t size() const { return m_size; }
 
 
-    // Оператор добавления элемента в конец вектора
+    // Оператор добавления элемента в конец листа
     void push_back(const T &value) {
         auto *newNode = new Node<T>(value);    // Создаём новую ноду
         if (m_size == 0) {
             this->m_begin = newNode;
-            this->m_end = m_begin;
+            auto *endNode = new Node<T>({});    // Создаём концевую ноду
+            this->m_end = endNode;
+            this->m_end->prev = m_begin;
+            this->m_begin->next = m_end;
             this->m_size++;
         } else {
-            //Node *current = this->m_begin;
-            //while (current->next != nullptr) { current = current->next; }
-            newNode->prev = m_end;      // В последнюю ячейку присваиваем предыдущий конец
-            m_end->next = newNode;      // В предыдущий конец присваиваем текущую ноду
-            this->m_end = newNode;      // В конец листа присваиваем адрес новой ноды
+            (m_end->prev)->next = newNode; // В предпоследнюю ноду записываем новый конец
+            newNode->prev = m_end->prev;    // В новую ноду записываем предпоследний элемент
+            newNode->next = m_end;      // В последнюю ячейку присваиваем предыдущий конец
+            m_end->prev = newNode;      // В конец записываем новую ноду
             this->m_size++;
         }
     }
@@ -188,7 +190,10 @@ public:
         auto *newNode = new Node<T>(value);    // Создаём новую ноду
         if (m_size == 0) {
             this->m_begin = newNode;
-            this->m_end = m_begin;
+            auto *endNode = new Node<T>({});    // Создаём концевую ноду
+            this->m_end = endNode;
+            this->m_end->prev = m_begin;
+            this->m_begin->next = m_end;
             this->m_size++;
         } else {
             newNode->next = m_begin;      // В первую ячейку присваиваем предыдущее начало
@@ -201,14 +206,18 @@ public:
 
     // Оператор удаления элемента из конца вектора
     void pop_back() {
-        if (m_end->prev != nullptr) {
-            Node<T> *new_end = m_end->prev;
-            delete this->m_end;
-            this->m_end = new_end;    // Присваиваем новые указатели
-            m_end->next = nullptr;
+        if (m_end->prev != m_begin) {
+            // Находим предпоследний элемент
+            Node<T> *pprev = (m_end->prev)->prev;
+            // Присваиваем новые указатели в обход удаляемого элемента
+            pprev->next = m_end;
+            // Удаляем старый элемент
+            delete m_end->prev;
+            m_end->prev = pprev;
             --m_size;
         } else {
-            delete this->m_end;
+            delete m_end;
+            delete m_begin;
             this->m_end = nullptr;    // Зануляем указатели
             this->m_begin = nullptr;
             --m_size;
@@ -263,11 +272,11 @@ public:
 
     iterator begin() { return iterator(m_begin); }
 
-    iterator end() { return iterator(m_end->next); }
+    iterator end() { return iterator(m_end); }
 
     const_iterator begin() const { return const_iterator(m_begin); }
 
-    const_iterator end() const { return const_iterator(m_end->next); }
+    const_iterator end() const { return const_iterator(m_end); }
 
 
     iterator erase(iterator pos) {
@@ -318,10 +327,8 @@ private:
 #ifdef DEBUG
         std::cout << "\tКопируем элементы из другого объекта\n";
 #endif
-        auto otherElem = other.begin();
-        while (otherElem != nullptr) {
-            push_back(*otherElem);
-            ++otherElem;
+        for(auto otherElem : other){
+            push_back(otherElem);
         }
     }
 
