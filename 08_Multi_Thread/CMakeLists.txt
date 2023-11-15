@@ -13,19 +13,35 @@ endif()
 
 set(CMAKE_CXX_STANDARD 20)
 
+add_executable(singlethread
+        topk_words.cpp
+        common_func.cpp)
+
 add_executable(multithread
-        topk_words.cpp)
+        topk_words_mt.cpp
+        common_func.cpp)
+
+target_compile_options(singlethread PUBLIC
+        -g
+        -Wall
+        -Wextra
+        -pedantic
+        #-O2
+        #-fsanitize=leak
+        #-fsanitize=address
+        #-fsanitize=undefined
+        )
 
 target_compile_options(multithread PUBLIC
         -g
         -Wall
         -Wextra
         -pedantic
-        -O2
+        #-O2
         #-fsanitize=leak
         #-fsanitize=address
         #-fsanitize=undefined
-        )
+)
 
 #set(COMM_SANITIZER "-fsanitize=address -fsanitize=undefined -fsanitize-recover=all")
 #set(CMAKE_CXX_FLAGS ${COMM_SANITIZER})

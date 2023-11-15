@@ -1,12 +1,13 @@
 // Read files and prints top k word by frequency
 
-#include "common_func.h"
-
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <chrono>
+#include <future>
+
+#include "common_func.h"
 
 const size_t TOPK = 10; // Размер выводимого списка наиболее встречающихся слов
 
@@ -18,14 +19,23 @@ int main(int argc, char *argv[]) {
 
     auto start = std::chrono::high_resolution_clock::now();
     Counter freq_dict;
+
+    std::vector<std::future<Counter>> tasks;
+
     for (int i = 1; i < argc; ++i) {
-        std::ifstream input{argv[i]};
-        if (!input.is_open()) {
-            std::cerr << "Failed to open file " << argv[i] << '\n';
-            return EXIT_FAILURE;
-        }
-        count_words(input, freq_dict);
+
+
+        tasks.push_back(std::async(mt_count_words, argv[i]));
     }
+
+    for (auto & task : tasks) {
+        try {
+            freq_dict.merge(task.get());
+        } catch (std::exception &e) {
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
+    }
+
     auto count = std::chrono::high_resolution_clock::now();
     print_topk1(std::cout, freq_dict, TOPK);
     auto end = std::chrono::high_resolution_clock::now();
