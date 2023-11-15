@@ -21,6 +21,7 @@ target_compile_options(multithread PUBLIC
         -Wall
         -Wextra
         -pedantic
+        -O2
         #-fsanitize=leak
         #-fsanitize=address
         #-fsanitize=undefined
