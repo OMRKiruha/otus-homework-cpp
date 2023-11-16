@@ -23,22 +23,25 @@ int main(int argc, char *argv[]) {
     std::vector<std::future<Counter>> tasks;
 
     for (int i = 1; i < argc; ++i) {
-
-
         tasks.push_back(std::async(mt_count_words, argv[i]));
     }
 
     for (auto & task : tasks) {
         try {
-            freq_dict.merge(task.get());
+            for (const auto& it: task.get()) {
+                freq_dict[it.first] += it.second;
+            }
         } catch (std::exception &e) {
             std::cerr << "Error: " << e.what() << std::endl;
         }
     }
 
     auto count = std::chrono::high_resolution_clock::now();
-    print_topk1(std::cout, freq_dict, TOPK);
+    std::stringstream out;
+    print_topk1(out, freq_dict, TOPK);
+
     auto end = std::chrono::high_resolution_clock::now();
+    std::cout << out.str();
 
     auto count_ms = std::chrono::duration_cast<std::chrono::microseconds>(count - start);
     std::cout << "Count words time is " << count_ms.count() << " us\n";

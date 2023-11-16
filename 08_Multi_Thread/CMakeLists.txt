@@ -17,8 +17,8 @@ add_executable(singlethread
         topk_words.cpp
         common_func.cpp)
 
-add_executable(multithread
-        topk_words_mt.cpp
+add_executable(multithread_async
+        topk_words_mt_async.cpp
         common_func.cpp)
 
 target_compile_options(singlethread PUBLIC
@@ -32,7 +32,7 @@ target_compile_options(singlethread PUBLIC
         #-fsanitize=undefined
         )
 
-target_compile_options(multithread PUBLIC
+target_compile_options(multithread_async PUBLIC
         -g
         -Wall
         -Wextra

@@ -27,9 +27,10 @@ int main(int argc, char *argv[]) {
         count_words(input, freq_dict);
     }
     auto count = std::chrono::high_resolution_clock::now();
-    print_topk1(std::cout, freq_dict, TOPK);
+    std::stringstream out;
+    print_topk1(out, freq_dict, TOPK);
     auto end = std::chrono::high_resolution_clock::now();
-
+    std::cout << out.str();
     auto count_ms = std::chrono::duration_cast<std::chrono::microseconds>(count - start);
     std::cout << "Count words time is " << count_ms.count() << " us\n";
 

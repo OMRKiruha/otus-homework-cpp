@@ -83,7 +83,7 @@ void print_topk(std::ostream &stream, const Counter &counter, const size_t k) {
             std::begin(words), std::begin(words) + k,
             [&stream](const Counter::const_iterator &pair) {
                 stream << std::setw(4) << pair->second << " " << pair->first
-                       << '\n';
+                       << std::endl;
             });
 }
 
@@ -113,6 +113,6 @@ void print_topk1(std::ostream &stream, const Counter &counter, const size_t k) {
     for (auto word: words) {
         // Находим максимальные значения за один проход по карте
         // Вывод
-        stream << std::setw(4) << word->second << " " << word->first << '\n';
+        stream << std::setw(4) << word->second << " " << word->first << std::endl;
     }
 }
